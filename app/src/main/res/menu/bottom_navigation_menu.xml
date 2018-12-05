@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/ic_items"
+        android:icon="@drawable/list"
+        android:title="Items"
+        />
+
+    <item
+        android:id="@+id/ic_map"
+        android:icon="@drawable/location"
+        android:title="Map"
+        />
+    <item
+        android:id="@+id/ic_split"
+        android:icon="@drawable/money"
+        android:title="Split"
+        />
+    <item
+        android:id="@+id/ic_history"
+        android:icon="@drawable/history"
+        android:title="History"
+        />
+    <item
+        android:id="@+id/ic_account"
+        android:icon="@drawable/account"
+        android:title="Account"
+        />
+
+
+</menu>

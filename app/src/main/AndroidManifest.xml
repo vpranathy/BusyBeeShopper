@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".LocationActivity"></activity>
+        <activity android:name=".SplitActivity"></activity>
+        <activity android:name=".HistoryActivity"></activity>
     </application>
 
 </manifest>

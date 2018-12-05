@@ -43,7 +43,7 @@
                 android:textColor="@color/colorYellow"
                 android:layout_marginTop="80dp"
                 android:textSize="30sp"
-                android:id="@+id/tvm"
+                android:id="@+id/tvs"
                 android:textAlignment="center"/>
 
         </RelativeLayout>
