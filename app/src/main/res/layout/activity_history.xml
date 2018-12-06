@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mobileapp.busybeeshopper.MainActivity">
+    tools:context="com.example.mobileapp.busybeeshopper.HistoryActivity">
 
 
     <RelativeLayout
@@ -36,15 +36,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-
             <TextView
+                android:id="@+id/title_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorYellow"
-                android:layout_marginTop="80dp"
-                android:textSize="30sp"
-                android:id="@+id/tvh"
-                android:textAlignment="center"/>
+                android:text="History"
+                android:textStyle="italic"
+                android:textSize="17sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorLightBlue"
+                android:layout_alignParentTop="true"
+
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/HistoryItems"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/title_history"
+                >
+
+            </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
 

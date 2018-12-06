@@ -1,24 +1,40 @@
 package com.example.mobileapp.busybeeshopper;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class HistoryActivity extends AppCompatActivity {
+    ArrayList<String> historyItems= new ArrayList<>();
+    RecyclerView recyclerView;
+    SampleDatabase db;
+    RecyclerViewHistory recyclerViewHistory;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
         /***************bottom code for text view to test menu****************************/
-        TextView title = (TextView) findViewById(R.id.tvh);
-        title.setText("This is History Activity");
+        /**Initialize objects**/
+        recyclerView= (RecyclerView)findViewById(R.id.HistoryItems);
+        db= new SampleDatabase(this);
+        recyclerViewHistory= new RecyclerViewHistory(this,historyItems);
+        recyclerView.setAdapter(recyclerViewHistory);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        populateHistory();
+        recyclerViewHistory.notifyDataSetChanged();
+
         /***************code for navigation bar below****************************/
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavView_Bar);
@@ -61,5 +77,13 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
         /***************code for navigation bar ends here****************************/
+    }
+
+    private void populateHistory() {
+        historyItems.clear();
+        Cursor data = db.getData();
+        while (data.moveToNext()) {
+            historyItems.add(data.getString(2));
+        }
     }
 }

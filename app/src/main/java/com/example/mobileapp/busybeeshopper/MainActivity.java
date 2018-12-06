@@ -1,15 +1,35 @@
 package com.example.mobileapp.busybeeshopper;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG="MainActivity";
+    ArrayList<String> items= new ArrayList<>();
+    ArrayList<Integer> itemImageID= new ArrayList<>();
+    RecyclerView recyclerView;
+    EditText addItem;
+    EditText groupID;
+    AlertDialog ad;
+    RecyclerViewAdapter recyclerViewAdapter;
+    SampleDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +38,33 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         /***************bottom code for text view to test menu****************************/
-        TextView title = (TextView) findViewById(R.id.tvm);
-        title.setText("This is Main Activity");
+
+        /** Initialize items **/
+
+        ImageView addbtn= (ImageView)findViewById(R.id.addButton);
+        recyclerView = (RecyclerView) findViewById(R.id.listOfItems);
+        db= new SampleDatabase(this);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        populateList();
+        recyclerViewAdapter.notifyDataSetChanged();
+
+        addbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Add an alert dialog to allow user to enter item and group
+                createAlert();
+
+
+            }
+        });
+
+
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavView_Bar);
         Menu menu = bottomNavigationView.getMenu();
@@ -60,6 +104,77 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+    }
+
+    private void createAlert() {
+        AlertDialog.Builder alert= new AlertDialog.Builder(this);
+        alert.setTitle("Enter item");
+        /**Create layout of alert dialog box**/
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        addItem= new EditText(this);
+        addItem.setHint("Item");
+        layout.addView(addItem);
+
+
+        groupID= new EditText(this);
+        groupID.setHint("Group ID");
+        layout.addView(groupID);
+
+
+
+        alert.setView(layout);
+        alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String name= "Parul";
+                Integer id;
+                String item= addItem.getText().toString();
+                String idText=groupID.getText().toString();
+                if(idText.matches("")){
+                    id=0;
+                }
+                else {
+                    id = Integer.parseInt(idText);
+                }
+                db.add(name,item,id);
+                populateList();
+                recyclerViewAdapter.notifyDataSetChanged();
+
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+        ad= alert.create();
+        ad.show();
+
+    }
+
+    private void populateList() {
+        items.clear();
+        itemImageID.clear();
+        Cursor data= db.getData();
+        while (data.moveToNext()){
+            items.add(data.getString(2));
+            Integer groupid=data.getInt(3);
+            if(groupid==0){
+                Integer imageResourceId=this.getResources().getIdentifier("ic_person","drawable",this.getPackageName());
+                itemImageID.add(imageResourceId);
+            }
+            else {
+                Integer imageResourceId1=this.getResources().getIdentifier("ic_group","drawable",this.getPackageName());
+                itemImageID.add(imageResourceId1);
+            }
+        }
+
 
     }
 }

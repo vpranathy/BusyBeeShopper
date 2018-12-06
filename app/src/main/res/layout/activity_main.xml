@@ -19,7 +19,37 @@
 
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorBlue"
+                    android:contentInsetEnd="0dp"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetRight="0dp"
+                    android:contentInsetStart="0dp"
+                    android:elevation="2dp"
+                    app:contentInsetEnd="0dp"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetRight="0dp"
+                    app:contentInsetStart="0dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="BusyBeeShoppers"
+                        android:textColor="@color/colorFawn"
+                        android:textColorHighlight="@color/colorAccent"
+                        android:textSize="20sp"
+                        android:textStyle="italic|bold"
+                        />
+
+                </android.support.v7.widget.Toolbar>
 
 
 
@@ -38,13 +68,32 @@
             >
 
             <TextView
+                android:id="@+id/title_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorYellow"
-                android:layout_marginTop="80dp"
-                android:textSize="30sp"
-                android:id="@+id/tvm"
-                android:textAlignment="center"/>
+                android:text="To Buy List"
+                android:textStyle="italic"
+                android:textSize="17sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorLightBlue"
+                android:layout_alignParentTop="true"
+
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/listOfItems"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/title_main"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+            <ImageView
+                android:id="@+id/addButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_circle_black"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 
