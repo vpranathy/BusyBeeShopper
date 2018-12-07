@@ -53,7 +53,7 @@ public class HistoryActivity extends AppCompatActivity {
                         break;
 
                     case R.id.ic_map:
-                        Intent intent1 = new Intent(HistoryActivity.this, LocationActivity.class);
+                        Intent intent1 = new Intent(HistoryActivity.this, MapsActivity.class);
                         startActivity(intent1);
                         break;
 

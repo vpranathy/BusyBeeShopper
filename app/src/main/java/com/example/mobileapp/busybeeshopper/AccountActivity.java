@@ -39,7 +39,7 @@ public class AccountActivity extends AppCompatActivity {
                         break;
 
                     case R.id.ic_map:
-                        Intent intent1 = new Intent(AccountActivity.this, LocationActivity.class);
+                        Intent intent1 = new Intent(AccountActivity.this, MapsActivity.class);
                         startActivity(intent1);
                         break;
 

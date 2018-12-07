@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Busy Bee Shopper</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

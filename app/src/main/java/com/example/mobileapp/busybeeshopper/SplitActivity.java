@@ -38,7 +38,7 @@ public class SplitActivity extends AppCompatActivity {
                         break;
 
                     case R.id.ic_map:
-                        Intent intent1 = new Intent(SplitActivity.this, LocationActivity.class);
+                        Intent intent1 = new Intent(SplitActivity.this, MapsActivity.class);
                         startActivity(intent1);
                         break;
 

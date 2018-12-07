@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.ic_map:
-                        Intent intent1 = new Intent(MainActivity.this, LocationActivity.class);
+                        Intent intent1 = new Intent(MainActivity.this, MapsActivity.class);
                         startActivity(intent1);
                         break;
 
