@@ -37,8 +37,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +63,9 @@ public class LoginActivity extends AppCompatActivity  {
     private EditText mEmail;
     private View mProgressView;
     private View mLoginFormView;
-    private String email, password, username;
+    private String email, password, username,retrievedUsername,retrievedGroup;
+    int retievedType;
     Intent onSignIn;
-    
     //firebaseAuth
     private FirebaseAuth mAuth;
     
@@ -78,7 +82,8 @@ public class LoginActivity extends AppCompatActivity  {
         mEmail = findViewById(R.id.email);
         mPasswordView=findViewById(R.id.password);
         
-
+        //intent
+        Intent onSignIn;
 
         //firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -95,6 +100,7 @@ public class LoginActivity extends AppCompatActivity  {
         email= mEmail.getText().toString();
         password= mPasswordView.getText().toString();
         username=mUserName.getText().toString();
+        onSignIn= new Intent(this,MainActivity.class);
         final Users newUser = new Users(email,username,0,username);
         Log.d(TAG, "createAccount: email and password is "+email+"    "+password);
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -125,6 +131,7 @@ public class LoginActivity extends AppCompatActivity  {
         Log.d(TAG, "createAccount: starting");
         email= mEmail.getText().toString();
         password= mPasswordView.getText().toString();
+        final DatabaseReference myref2 = database.getReference("Users");
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -134,7 +141,32 @@ public class LoginActivity extends AppCompatActivity  {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.d(TAG, "onComplete: successfully signed in");
+                            Query query = myref2.orderByChild("email").equalTo(email);
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "onDataChange: entered the sign query");
+                                    Log.d(TAG, "onDataChange: "+dataSnapshot);
+                                    if (dataSnapshot.exists()){
+                                        for (DataSnapshot reference:dataSnapshot.getChildren()){
+                                            Log.d(TAG, "onDataChange: "+reference);
+                                            Users user=reference.getValue(Users.class);
+                                            retrievedUsername = user.getUsername();
+                                            retrievedGroup=user.getGroup();
+                                            retievedType=user.getType();
+                                            onSignIn.putExtra("username",retrievedUsername);
+                                            onSignIn.putExtra("group",retrievedGroup);
+                                            onSignIn.putExtra("type",retievedType);
+                                            startActivity(onSignIn);
+                                        }
+                                    }
+                                }
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
 
                         } else {
                             // If sign in fails, display a message to the user.
