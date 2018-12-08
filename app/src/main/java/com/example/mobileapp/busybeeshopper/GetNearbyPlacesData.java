@@ -1,17 +1,21 @@
 package com.example.mobileapp.busybeeshopper;
 
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.HashMap;
 import java.util.List;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
 
@@ -37,25 +41,39 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
 
     @Override
     protected void onPostExecute(String result) {
+
         Log.d("GooglePlacesReadTask", "onPostExecute Entered");
         List<HashMap<String, String>> nearbyPlacesList = null;
         DataParser dataParser = new DataParser();
         nearbyPlacesList =  dataParser.parse(result);
-        ShowNearbyPlaces(nearbyPlacesList);
-        Log.d("GooglePlacesReadTask", "onPostExecute Exit");
-    }
-
-
-    private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
         for (int i = 0; i < nearbyPlacesList.size(); i++) {
-            Log.d("onPostExecute","Entered into showing locations");
-            MarkerOptions markerOptions = new MarkerOptions();
             HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
             double lat = Double.parseDouble(googlePlace.get("lat"));
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
             String vicinity = googlePlace.get("vicinity");
-            LatLng latLng = new LatLng(lat, lng);
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("mydata", null);
+            database.execSQL("INSERT INTO Entries (Latitude, Longitude, Name, Vicinity) VALUES ('" + lat + "','" + lng + "', '" + placeName + "','" + vicinity + "')");
+        }
+        Log.d("GooglePlacesReadTask", "onPostExecute Exit");
+    }
+
+
+    public void ShowNearbyPlaces() {
+        Log.d("onPostExecute","Entered into showing locations");
+        MarkerOptions markerOptions = new MarkerOptions();
+        ////Ye line check kar
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("mydata", null);
+
+        Cursor c = database.rawQuery("Select * from Entries", null);
+        int Latitude = c.getColumnIndex("Latitude");
+        int Longitude = c.getColumnIndex("Longitude");
+        int name = c.getColumnIndex("Name");
+        int Vicinity = c.getColumnIndex("Vicinity");
+        while (c.moveToNext()){
+            LatLng latLng = new LatLng(c.getDouble(Latitude),c.getDouble(Longitude));
+            String placeName = c.getString(name);
+            String vicinity = c.getString(Vicinity);
             markerOptions.position(latLng);
             markerOptions.title(placeName + " : " + vicinity);
             mMap.addMarker(markerOptions);
