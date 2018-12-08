@@ -13,14 +13,14 @@ public class SampleDatabase extends SQLiteOpenHelper {
     public static final String COL1= "ID";
     public static final String COL2="username";
     public static final String COL3="item";
-    public static final String COL4="groupNumber";
+    public static final String COL4="itemDesc";
     public SampleDatabase(Context context) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 3);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createUserTable= "CREATE TABLE "+ TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,"+ COL2+ " TEXT,"+ COL3+ " TEXT,"+ COL4 +" INT)";
+        String createUserTable= "CREATE TABLE "+ TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,"+ COL2+ " TEXT,"+ COL3+ " TEXT,"+ COL4 +" TEXT)";
         db.execSQL(createUserTable);
     }
 
@@ -30,12 +30,12 @@ public class SampleDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean add(String userName, String item,Integer groupId){
+    public boolean add(String userName, String item,String itemDesc){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2, userName);
         contentValues.put(COL3,item);
-        contentValues.put(COL4,groupId);
+        contentValues.put(COL4,itemDesc);
         Log.i("DataBase", "adding data to table " + TABLE_NAME);
         long res = db.insert(TABLE_NAME, null, contentValues);
         if (res == -1) {

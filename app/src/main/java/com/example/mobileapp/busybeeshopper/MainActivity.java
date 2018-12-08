@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> itemImageID= new ArrayList<>();
     RecyclerView recyclerView;
     EditText addItem;
-    EditText groupID;
+    EditText itemDesc;
     AlertDialog ad;
     RecyclerViewAdapter recyclerViewAdapter;
     SampleDatabase db;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ItemTouchHelper itemTouchHelper= new ItemTouchHelper(new SwipeToDeleteCallback(recyclerViewAdapter));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
 
         populateList();
         recyclerViewAdapter.notifyDataSetChanged();
@@ -119,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
         layout.addView(addItem);
 
 
-        groupID= new EditText(this);
-        groupID.setHint("Group ID");
-        layout.addView(groupID);
+        itemDesc= new EditText(this);
+        itemDesc.setHint("Item Description");
+        layout.addView(itemDesc);
 
 
 
@@ -133,14 +137,8 @@ public class MainActivity extends AppCompatActivity {
                 String name= "Parul";
                 Integer id;
                 String item= addItem.getText().toString();
-                String idText=groupID.getText().toString();
-                if(idText.matches("")){
-                    id=0;
-                }
-                else {
-                    id = Integer.parseInt(idText);
-                }
-                db.add(name,item,id);
+                String descText=itemDesc.getText().toString();
+                db.add(name,item,descText);
                 populateList();
                 recyclerViewAdapter.notifyDataSetChanged();
 
@@ -164,15 +162,11 @@ public class MainActivity extends AppCompatActivity {
         Cursor data= db.getData();
         while (data.moveToNext()){
             items.add(data.getString(2));
-            Integer groupid=data.getInt(3);
-            if(groupid==0){
+
+
                 Integer imageResourceId=this.getResources().getIdentifier("ic_person","drawable",this.getPackageName());
                 itemImageID.add(imageResourceId);
-            }
-            else {
-                Integer imageResourceId1=this.getResources().getIdentifier("ic_group","drawable",this.getPackageName());
-                itemImageID.add(imageResourceId1);
-            }
+
         }
 
 

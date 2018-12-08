@@ -22,6 +22,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     LayoutInflater inflater;
     ArrayList<Integer> imgId;
 
+
     public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid) {
         this.context=thisContext;
         this.itemList=list;
@@ -53,6 +54,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return itemList.size();
+    }
+    public void delete(int position){
+        itemList.remove(position);
+        imgId.remove(position);
+        notifyItemRemoved(position);
+
     }
 
 
