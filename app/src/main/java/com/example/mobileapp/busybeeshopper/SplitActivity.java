@@ -35,26 +35,31 @@ public class SplitActivity extends AppCompatActivity {
                     case R.id.ic_items:
                         Intent intent0 = new Intent(SplitActivity.this, MainActivity.class);
                         startActivity(intent0);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_map:
                         Intent intent1 = new Intent(SplitActivity.this, MapsActivity.class);
                         startActivity(intent1);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_split:
                         Intent intent2 = new Intent(SplitActivity.this, SplitActivity.class);
                         startActivity(intent2);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_history:
                         Intent intent3 = new Intent(SplitActivity.this, HistoryActivity.class);
                         startActivity(intent3);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_account:
                         Intent intent4 = new Intent(SplitActivity.this, AccountActivity.class);
                         startActivity(intent4);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                 }
 
