@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG="MainActivity";
     ArrayList<String> items= new ArrayList<>();
     ArrayList<Integer> itemImageID= new ArrayList<>();
+    ArrayList<String> itemAddBy= new ArrayList<>();
     RecyclerView recyclerView;
     EditText addItem;
     EditText itemDesc;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView addbtn= (ImageView)findViewById(R.id.addButton);
         recyclerView = (RecyclerView) findViewById(R.id.listOfItems);
         db= new SampleDatabase(this);
-        recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID,itemAddBy);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ItemTouchHelper itemTouchHelper= new ItemTouchHelper(new SwipeToDeleteCallback(recyclerViewAdapter));
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 String name= "Parul";
-                Integer id;
+
                 String item= addItem.getText().toString();
                 String descText=itemDesc.getText().toString();
                 db.add(name,item,descText);
@@ -162,7 +163,9 @@ public class MainActivity extends AppCompatActivity {
         itemImageID.clear();
         Cursor data= db.getData();
         while (data.moveToNext()){
+            String add1= "Added By: "+data.getString(1);
             items.add(data.getString(2));
+            itemAddBy.add(add1);
 
 
                 Integer imageResourceId=this.getResources().getIdentifier("ic_person","drawable",this.getPackageName());
