@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "935584511097",
+    "firebase_url": "https://busybeeshopper-9f627.firebaseio.com",
+    "project_id": "busybeeshopper-9f627",
+    "storage_bucket": "busybeeshopper-9f627.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935584511097:android:94fe09da9123bf99",
+        "android_client_info": {
+          "package_name": "com.example.mobileapp.busybeeshopper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935584511097-n6mrnlqve2cqluai81jfk8jdf7qdk60f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mobileapp.busybeeshopper",
+            "certificate_hash": "a7f4162f6386644a187ab7ce9044302ef17c548f"
+          }
+        },
+        {
+          "client_id": "935584511097-ru1kp9rijm9diggk37s85kj7521ffegc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCk6EQrxiblkQQxLsZ8ua6GJqFSFsdZ_QE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935584511097-ru1kp9rijm9diggk37s85kj7521ffegc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
