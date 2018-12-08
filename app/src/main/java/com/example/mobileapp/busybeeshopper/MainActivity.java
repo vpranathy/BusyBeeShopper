@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    /**** Function to create an alert dialogue to enter item name and description ******/
 
     private void createAlert() {
         AlertDialog.Builder alert= new AlertDialog.Builder(this);
