@@ -37,14 +37,33 @@
             android:layout_height="match_parent"
             >
 
-            <TextView
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorYellow"
-                android:layout_marginTop="80dp"
-                android:textSize="30sp"
-                android:id="@+id/tvs"
-                android:textAlignment="center"/>
+                android:background="#7367">
+
+                <android.support.design.widget.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You owe" />
+
+                <android.support.design.widget.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You are owed" />
+
+
+            </android.support.design.widget.TabLayout>
+
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="455dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tabLayout">
+            </FrameLayout>
 
         </RelativeLayout>
 

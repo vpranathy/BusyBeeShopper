@@ -5,20 +5,73 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class SplitActivity extends AppCompatActivity {
+
+    TabLayout tabLayout;
+    FrameLayout frameLayout;
+    Fragment fragment = null;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState){
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_split);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
+
+        fragment = new UOFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Fragment fragment = null;
+                switch (tab.getPosition()) {
+                    case 0:
+                        fragment = new UOFragment();
+                        break;
+                    case 1:
+                        fragment = new UROFragment();
+                        break;
+
+                }
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.frameLayout, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.commit();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
 
         /***************bottom code for text view to test menu****************************/
-        TextView title = (TextView) findViewById(R.id.tvs);
-        title.setText("This is Split Activity");
+        //TextView title = (TextView) findViewById(R.id.tvs);
+        //title.setText("This is Split Activity");
 
 
         /***************code for navigation bar below****************************/
@@ -31,7 +84,7 @@ public class SplitActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.ic_items:
                         Intent intent0 = new Intent(SplitActivity.this, MainActivity.class);
                         startActivity(intent0);
@@ -69,4 +122,5 @@ public class SplitActivity extends AppCompatActivity {
         });
         /***************code for navigation bar ends here****************************/
     }
+
 }
