@@ -21,12 +21,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     ArrayList<String> itemList;
     LayoutInflater inflater;
     ArrayList<Integer> imgId;
+    ArrayList<String> itemAdd;
 
 
-    public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid) {
+    public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid, ArrayList<String> addedBy) {
         this.context=thisContext;
         this.itemList=list;
         this.imgId=imgid;
+        this.itemAdd=addedBy;
         inflater=LayoutInflater.from(thisContext);
     }
 
@@ -43,6 +45,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         Glide.with(context).asBitmap().load(imgId.get(i)).into(viewHolder.itemIcon);
         viewHolder.itemName.setText(itemList.get(i));
+        viewHolder.itemAddedBy.setText(itemAdd.get(i));
 
     }
 
@@ -58,6 +61,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void delete(int position){
         itemList.remove(position);
         imgId.remove(position);
+        itemAdd.remove(position);
         notifyItemRemoved(position);
 
     }
@@ -66,12 +70,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView itemIcon;
         TextView itemName;
+        TextView itemAddedBy;
         RelativeLayout itemLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemIcon= itemView.findViewById(R.id.userIcon);
             itemName= itemView.findViewById(R.id.individualItem);
+            itemAddedBy=itemView.findViewById(R.id.itemAddedBy);
             itemLayout=itemView.findViewById(R.id.layout_item);
 
         }
