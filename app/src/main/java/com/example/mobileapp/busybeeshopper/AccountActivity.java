@@ -17,8 +17,8 @@ public class AccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account);
 
 
-        TextView title = (TextView) findViewById(R.id.tva);
-        title.setText("This is Account Activity");
+        //TextView title = (TextView) findViewById(R.id.tva);
+        //title.setText("This is Account Activity");
 
 
 
