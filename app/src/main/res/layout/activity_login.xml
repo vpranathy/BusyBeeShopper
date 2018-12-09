@@ -36,15 +36,20 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/UserName"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_UserName"
+                    android:hint="Enter Email ID"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/UserName"
+                android:hint="Enter Username"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -54,7 +59,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
+                    android:hint ="Password"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
@@ -64,14 +69,26 @@
 
             </android.support.design.widget.TextInputLayout>
 
+
+
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
-                android:textStyle="bold" />
+                android:text="sign_in"
+                android:textStyle="bold"
+                android:onClick="signIn"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/register"
+                android:onClick="createAccount"
+                android:text="Register"
+                />
+
 
         </LinearLayout>
     </ScrollView>

@@ -23,6 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity"
             android:parentActivityName=".LoginActivity">
 
@@ -43,17 +44,19 @@
             android:value="AIzaSyC7lpgUWhgim2s7FneV4jrUTEYN-fAVIho" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="AIzaSyC7lpgUWhgim2s7FneV4jrUTEYN-fAVIho" />
-        <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MapsActivity"
+            android:label="AIzaSyC7lpgUWhgim2s7FneV4jrUTEYN-fAVIho"/>
+        <service android:name=".GetNearbyPlacesData"
+            android:enabled="true"/>
     </application>
 
 </manifest>
