@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -28,9 +29,15 @@ import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,9 +46,13 @@ import android.database.Cursor;
 
 public class GetNearbyPlacesData extends Service {
     private int PROXIMITY_RADIUS = 50;
-    LocationManager locationManager;
+    LocationManager locationManager1;
+    LocationManager locationManager2;
+    LocationManager locationManager3;
+
     LocationListener locationListener1;
     LocationListener locationListener2;
+    LocationListener locationListener3;
     double latitude;
     double longitude;
     String googlePlacesData;
@@ -49,27 +60,33 @@ public class GetNearbyPlacesData extends Service {
     GoogleMap mMap;
     String url;
     private static final String TAG = "GetNearbyPlacesData";
+    FirebaseDatabase mydatabase = FirebaseDatabase.getInstance();
+    DatabaseReference myref;
+    String username, userGroup;
+    ArrayList<String> items = new ArrayList<>();
+
+    int usertype;
 
     @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: service calle");
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager1 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager2 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager3 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         locationListener1 = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                Log.d(TAG, "test locationlistener 1");
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.d(TAG, "onLocationChanged: " + latitude);
-                GetNearbyData getNearbyPlacesData = new GetNearbyData();
-                String Restaurant = "milk";
-                String url = getUrl(latitude, longitude, Restaurant);
-                Log.d(TAG, "URL: " + url);
-                Object[] DataTransfer = new Object[2];
-                DataTransfer[0] = mMap;
-                DataTransfer[1] = url;
-                getNearbyPlacesData.execute(DataTransfer);
+                if (items.size() != 0) {
+                    callapi(items);
+
+                }
 
             }
 
@@ -90,13 +107,13 @@ public class GetNearbyPlacesData extends Service {
         };
 
 
-
         locationListener2 = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                SQLiteDatabase database = openOrCreateDatabase("mydata",MODE_PRIVATE,null);
+                Log.d(TAG, "locationlistener 2 ");
+                SQLiteDatabase database = openOrCreateDatabase("mydata", MODE_PRIVATE, null);
                 database.execSQL("CREATE TABLE IF NOT EXISTS Entries(Latitude DOUBLE,Longitude DOUBLE,Name VARCHAR,Vicinity VARCHAR)");
                 Cursor c = database.rawQuery("Select * from Entries", null);
                 int Latitude = c.getColumnIndex("Latitude");
@@ -111,18 +128,18 @@ public class GetNearbyPlacesData extends Service {
                     String placeName = c.getString(name);
                     String vicinity = c.getString(Vicinity);
                     float distance = location2.distanceTo(location);
-                    if (distance < 20){
+                    if (distance < 20) {
                         // Build notification
                         // Actions are just fake
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
                         Notification noti = new Notification.Builder(getApplicationContext())
-                                .setContentTitle("Onr of the items you wish to purchase is available at "+placeName)
+                                .setContentTitle("Onr of the items you wish to purchase is available at " + placeName)
                                 .setContentText("Subject").setSmallIcon(R.drawable.bussybee)
                                 .setContentIntent(pIntent).build();
-                                //.addAction(R.drawable.icon, "Call")
-                                //.addAction(R.drawable.icon, "More", pIntent)
-                                //.addAction(R.drawable.icon, "And more", pIntent).build();
+                        //.addAction(R.drawable.icon, "Call")
+                        //.addAction(R.drawable.icon, "More", pIntent)
+                        //.addAction(R.drawable.icon, "And more", pIntent).build();
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         noti.defaults |= Notification.DEFAULT_SOUND;
 
@@ -151,8 +168,110 @@ public class GetNearbyPlacesData extends Service {
 
             }
         };
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10000, locationListener1);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 20, locationListener2);
+
+
+        locationListener3 = new LocationListener() {
+            @Override
+            public void onLocationChanged(final Location location) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Log.d(TAG, "test location listener 3 ");
+
+
+
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+
+
+        locationManager1.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10000, locationListener1);
+        locationManager2.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 20, locationListener2);
+        locationManager3.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener3);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("username", "nothing is passed");
+        userGroup = sharedPreferences.getString("group", "nothing is passed");
+        if (usertype == 0) {
+            DatabaseReference myref1 = mydatabase.getReference("PersonalList").child(username);
+            myref1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot reference : dataSnapshot.getChildren()) {
+                            items.clear();
+                            items.add(reference.child("itemName").getValue().toString());
+                        }
+                        callapi(items);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            DatabaseReference myref1 = mydatabase.getReference("PersonalList").child(userGroup);
+            myref1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot reference : dataSnapshot.getChildren()) {
+                            items.clear();
+                            items.add(reference.child("itemName").getValue().toString());
+                        }
+                        callapi(items);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+    }
+
+    private void callapi(ArrayList<String> items) {
+        Log.d(TAG, "test api called");
+
+        Log.d(TAG, "callapi latitude "+latitude);
+        database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
+        database.execSQL("DROP TABLE IF EXISTS ENTRIES");
+        GetNearbyData getNearbyPlacesData = new GetNearbyData();
+        for(int i =0; i<items.size();i++)
+        {
+            Log.d(TAG, "callapi: "+latitude);
+            String tofind = items.get(i);
+            String url = getUrl(latitude, longitude, tofind);
+            Log.d(TAG, "URL: " + url);
+            Object[] DataTransfer = new Object[2];
+            DataTransfer[0] = mMap;
+            DataTransfer[1] = url;
+            getNearbyPlacesData.execute(DataTransfer);
+
+        }
+
 
     }
 
