@@ -15,7 +15,7 @@ public class SampleDatabase extends SQLiteOpenHelper {
     public static final String COL3="item";
     public static final String COL4="itemDesc";
     public SampleDatabase(Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 4);
     }
 
     @Override

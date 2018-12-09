@@ -153,6 +153,7 @@ public class LoginActivity extends AppCompatActivity  {
                                             retrievedUsername = user.getUsername();
                                             retrievedGroup=user.getGroup();
                                             retievedType=user.getType();
+                                            //use shared preferences
                                             onSignIn.putExtra("username",retrievedUsername);
                                             onSignIn.putExtra("group",retrievedGroup);
                                             onSignIn.putExtra("type",retievedType);
