@@ -1,10 +1,13 @@
 package com.example.mobileapp.busybeeshopper;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,9 +43,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }else{
+            Log.d(TAG, "onCreate: permission granted");
+            startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+
+            // Write you code here if permission already given.
+        }
 
 
-        /***************bottom code for text view to test menu****************************/
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
+            Log.d(TAG, "onCreate: starting service");
+            startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+
+        }
+            /***************bottom code for text view to test menu****************************/
 
         /** Initialize items **/
 

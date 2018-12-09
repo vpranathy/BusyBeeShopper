@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
+
 public class DownloadUrl {
 
     public String readUrl(String strUrl) throws IOException {
@@ -50,3 +52,4 @@ public class DownloadUrl {
         return data;
     }
 }
+
