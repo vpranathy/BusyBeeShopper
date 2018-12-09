@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     //firebase
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myref;
+    DatabaseReference getUserUpdate;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -90,7 +92,27 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ItemTouchHelper itemTouchHelper= new ItemTouchHelper(new SwipeToDeleteCallback(recyclerViewAdapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        populateList();
+        getUserUpdate =database.getReference("Users");
+        Query  query = getUserUpdate.orderByChild("username").equalTo(username);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Users updatedUser = snaps.getValue(Users.class);
+                        userGroup=updatedUser.getGroup();
+                        usertype=updatedUser.getType();
+                        populateList();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         Log.d(TAG, "onCreate: ");
 
         addbtn.setOnClickListener(new View.OnClickListener() {
@@ -232,12 +254,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Log.d(TAG, "onDataChange: starting to get the data from personal list");
+                    Log.d(TAG, "onDataChange: datasnapshot in populate is "+dataSnapshot);
                     items.clear();
                     itemImageID.clear();
                     itemAddBy.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                            Log.d(TAG, "onDataChange: " + reference);
+                            Log.d(TAG, "onDataChange:  " + reference);
                             items.add(reference.child("itemName").getValue().toString());
                             Log.d(TAG, "onDataChange: name  " + reference.child("itemName").getValue().toString());
                             String add1 = "Added By: " + username;

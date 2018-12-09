@@ -157,6 +157,8 @@ public class LoginActivity extends AppCompatActivity  {
                                             //use shared preferences
                                             SharedPreferences sharedPreferences =LoginActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
                                             SharedPreferences.Editor editor=sharedPreferences.edit();
+                                            editor.remove("group");
+                                            editor.remove("type");
                                             editor.putString("username",retrievedUsername);
                                             editor.putString("group",retrievedGroup);
                                             editor.putInt("type",retievedType);

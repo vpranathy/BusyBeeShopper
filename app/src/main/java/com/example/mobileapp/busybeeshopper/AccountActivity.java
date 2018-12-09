@@ -150,6 +150,9 @@ public class AccountActivity extends AppCompatActivity {
                             editor.putInt("type",userType);
                             editor.apply();
                         }
+
+                        create.setVisibility(View.INVISIBLE);
+                        add.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -227,11 +230,13 @@ public class AccountActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Log.d(TAG, "onDataChange: the item is"+snaps);
                         String Name = snaps.child("itemName").getValue().toString();
                         String ID = snaps.child("itemID").getValue().toString();
                         String description = snaps.child("description").getValue().toString();
                         Item newItem = new Item(description, Name, ID);
-                        database.getReference("PersonalList").child(userName).setValue(newItem);
+                        Log.d(TAG, "onDataChange: the new item to the personal list when leaving is "+newItem.getItemName());
+                        database.getReference("PersonalList").child(userName).child(Name).setValue(newItem);
                     }
                     database.getReference(userGroup).child(userName).removeValue();
                     userGroup=userName;
