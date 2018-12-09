@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +37,18 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog ad;
     RecyclerViewAdapter recyclerViewAdapter;
     SampleDatabase db;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+
+                Log.i(TAG, "PERMISSION CHECK");
+
+            }
+        }
+    }
 
 
     @Override
@@ -43,22 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }else{
-            Log.d(TAG, "onCreate: permission granted");
-            startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
 
-            // Write you code here if permission already given.
-        }
-
-
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-            Log.d(TAG, "onCreate: starting service");
-            startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
-
-        }
             /***************bottom code for text view to test menu****************************/
 
         /** Initialize items **/
@@ -127,6 +126,19 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }else{
+            Log.d(TAG, "onCreate: permission granted");
+            startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+
+            // Write you code here if permission already given.
+        }
+
+
 
     }
     /**** Function to create an alert dialogue to enter item name and description ******/
