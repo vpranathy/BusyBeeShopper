@@ -1,12 +1,16 @@
 package com.example.mobileapp.busybeeshopper;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +27,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     LayoutInflater inflater;
     ArrayList<Integer> imgId;
     ArrayList<String> itemAdd;
+    EditText price;
+    AlertDialog ad;
+    String deletedName;
+    Integer deletedImg;
+    String deletedByUser;
 
 
     public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid, ArrayList<String> addedBy) {
@@ -61,10 +70,60 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return itemList.size();
     }
     public void delete(int position){
+        deletedName=itemList.get(position);
+        deletedImg=imgId.get(position);
+        deletedByUser=itemAdd.get(position);
+        int recentlyDeleted=position;
         itemList.remove(position);
         imgId.remove(position);
         itemAdd.remove(position);
         notifyItemRemoved(position);
+
+
+
+        createPurchaseAlert(position,recentlyDeleted,deletedName,deletedImg,deletedByUser);
+
+
+    }
+
+    private void createPurchaseAlert(final int position, final int recentlyDel, final String delName, final Integer delId, final String delUser) {
+        AlertDialog.Builder alert= new AlertDialog.Builder(context);
+        alert.setTitle("Enter Price of purchased item");
+        /**Create layout of alert dialog box**/
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        price= new EditText(context);
+        price.setHint("Enter Price");
+        layout.addView(price);
+
+        alert.setView(layout);
+        alert.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String item= price.getText().toString();
+                String itemName=itemList.get(position);
+                String addedBy=itemAdd.get(position);
+
+
+
+
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                itemList.add(recentlyDel,delName);
+                imgId.add(recentlyDel,delId);
+                itemAdd.add(recentlyDel,delUser);
+                notifyItemInserted(recentlyDel);
+                dialog.dismiss();
+
+            }
+        });
+        ad= alert.create();
+        ad.show();
+
 
     }
 
