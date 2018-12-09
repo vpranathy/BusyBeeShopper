@@ -132,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
 
         UiSettings uiSettings = mMap.getUiSettings();
         uiSettings.setCompassEnabled(true);
@@ -139,7 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uiSettings.setZoomControlsEnabled(true);
         uiSettings.setZoomControlsEnabled(true);
         ShowNearbyPlaces();
-        /*locationListener = new LocationListener() {
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 latitude = location.getLatitude();
@@ -169,8 +170,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-*/
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);
+
     }
 
     public void ShowNearbyPlaces() {
@@ -194,9 +195,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(markerOptions);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             //move map camera
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
         }
+
     }
 
 
