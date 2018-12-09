@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -64,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:id="@+id/Create"
+                android:onClick="CreateGroup"
                 android:text="Create Group"/>
             <Button
 
@@ -71,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:id="@+id/Add"
+                android:onClick="addUser"
                 android:visibility="invisible"
                 android:text="ADD"/>
             <Button
@@ -78,6 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/Leave"
+                android:onClick="leaveGroup"
                 android:text="Leave Group"/>
         </RelativeLayout>
 
@@ -103,4 +106,4 @@
 
     </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

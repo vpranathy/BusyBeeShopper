@@ -1,8 +1,10 @@
 package com.example.mobileapp.busybeeshopper;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.LocationManager;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
     //firebase
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myref;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -73,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
             /***************bottom code for text view to test menu****************************/
 
         /** Initialize items **/
-        username=getIntent().getStringExtra("username");
-        userGroup=getIntent().getStringExtra("group");
-        usertype=getIntent().getIntExtra("type",0);
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+        username=sharedPreferences.getString("username","nothing is passed");
+        userGroup=sharedPreferences.getString("group","nothing is passed");
+        usertype=sharedPreferences.getInt("type",100);
+        Log.d(TAG, "onCreate: sharedPreferences"+username+"   "+userGroup+"    "+usertype);
         ImageView addbtn= (ImageView)findViewById(R.id.addButton);
         recyclerView = (RecyclerView) findViewById(R.id.listOfItems);
         db= new SampleDatabase(this);
@@ -185,8 +191,12 @@ public class MainActivity extends AppCompatActivity {
                 db.add(username,item,descText);
 
                 //pushing data to database in firebase
-                DatabaseReference myref= database.getReference("PersonalList").child(username);
-                itemID=myref.push().getKey();
+                if (usertype ==0) {
+                     myref = database.getReference("PersonalList").child(username);
+                }else{
+                     myref =database.getReference(userGroup).child(username);
+                }
+                itemID= myref.push().getKey();
                 Item newItem= new Item(descText,item,itemID);
                 myref.child(item).setValue(newItem);
                 populateList();
@@ -212,37 +222,38 @@ public class MainActivity extends AppCompatActivity {
         itemAddBy.clear();
         Log.d(TAG, "populateList: items "+items);
         Log.d(TAG, "populateList: addeby "+itemAddBy);
-        DatabaseReference myref1 = database.getReference("PersonalList").child(username);
-        myref1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: starting to get the data from personal list");
-                items.clear();
-                itemImageID.clear();
-                itemAddBy.clear();
-                if (dataSnapshot.exists()){
-                    for(DataSnapshot reference: dataSnapshot.getChildren()){
-                        Log.d(TAG, "onDataChange: "+reference);
-                        items.add(reference.child("itemName").getValue().toString());
-                        Log.d(TAG, "onDataChange: name  "+reference.child("itemName").getValue().toString() );
-                        String add1= "Added By: "+username;
-                        Log.d(TAG, "onDataChange: username is"+add1);
-                        itemAddBy.add(add1);
-                        Log.d(TAG, "onDataChange: items are "+items);
-                        Log.d(TAG, "onDataChange: added by is"+itemAddBy);
-                        Integer imageResourceId=MainActivity.this.getResources().getIdentifier("ic_person","drawable",
-                                MainActivity.this.getPackageName());
-                        itemImageID.add(imageResourceId);
+        if (usertype == 0) {
+            DatabaseReference myref1 = database.getReference("PersonalList").child(username);
+            myref1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "onDataChange: starting to get the data from personal list");
+                    items.clear();
+                    itemImageID.clear();
+                    itemAddBy.clear();
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot reference : dataSnapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: " + reference);
+                            items.add(reference.child("itemName").getValue().toString());
+                            Log.d(TAG, "onDataChange: name  " + reference.child("itemName").getValue().toString());
+                            String add1 = "Added By: " + username;
+                            Log.d(TAG, "onDataChange: username is" + add1);
+                            itemAddBy.add(add1);
+                            Log.d(TAG, "onDataChange: items are " + items);
+                            Log.d(TAG, "onDataChange: added by is" + itemAddBy);
+                            Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_person", "drawable",
+                                    MainActivity.this.getPackageName());
+                            itemImageID.add(imageResourceId);
+                        }
                     }
+                    recyclerView.setAdapter(recyclerViewAdapter);
                 }
-                recyclerView.setAdapter(recyclerViewAdapter);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
 //        Cursor data= db.getData();
 //        while (data.moveToNext()){
 //            String add1= "Added By: "+data.getString(1);
@@ -254,6 +265,43 @@ public class MainActivity extends AppCompatActivity {
 //                itemImageID.add(imageResourceId);
 //        }
 
+        }else {
 
+            DatabaseReference myref1 = database.getReference(userGroup);
+            myref1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "onDataChange: starting to get the data from UserGroup");
+                    items.clear();
+                    itemImageID.clear();
+                    itemAddBy.clear();
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot reference : dataSnapshot.getChildren()) {
+                            for (DataSnapshot snaps : reference.getChildren()) {
+                                Log.d(TAG, "onDataChange: " + snaps);
+                                items.add(snaps.child("itemName").getValue().toString());
+                                Log.d(TAG, "onDataChange: name  " + snaps.child("itemName").getValue().toString());
+                                String add1 = "Added By: " + reference.getKey();
+                                Log.d(TAG, "onDataChange: username is" + add1);
+                                itemAddBy.add(add1);
+                                Log.d(TAG, "onDataChange: items are " + items);
+                                Log.d(TAG, "onDataChange: added by is" + itemAddBy);
+                                Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_person", "drawable",
+                                        MainActivity.this.getPackageName());
+                                itemImageID.add(imageResourceId);
+                            }
+                        }
+                        recyclerView.setAdapter(recyclerViewAdapter);
+                    }
+                }
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 }

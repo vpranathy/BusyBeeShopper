@@ -3,7 +3,9 @@ package com.example.mobileapp.busybeeshopper;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -68,7 +70,7 @@ public class LoginActivity extends AppCompatActivity  {
     Intent onSignIn;
     //firebaseAuth
     private FirebaseAuth mAuth;
-
+    Context context ;
     //Firebase database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -81,7 +83,6 @@ public class LoginActivity extends AppCompatActivity  {
         mUserName = (EditText) findViewById(R.id.UserName);
         mEmail = findViewById(R.id.email);
         mPasswordView=findViewById(R.id.password);
-
         //intent
          onSignIn = new Intent(this,MainActivity.class);
 
@@ -154,9 +155,16 @@ public class LoginActivity extends AppCompatActivity  {
                                             retrievedGroup=user.getGroup();
                                             retievedType=user.getType();
                                             //use shared preferences
-                                            onSignIn.putExtra("username",retrievedUsername);
-                                            onSignIn.putExtra("group",retrievedGroup);
-                                            onSignIn.putExtra("type",retievedType);
+                                            SharedPreferences sharedPreferences =LoginActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor=sharedPreferences.edit();
+                                            editor.putString("username",retrievedUsername);
+                                            editor.putString("group",retrievedGroup);
+                                            editor.putInt("type",retievedType);
+                                            editor.apply();
+//                                            onSignIn.putExtra("username",retrievedUsername);
+//                                            onSignIn.putExtra("group",retrievedGroup);
+//                                            onSignIn.putExtra("type",retievedType);
+
                                             startActivity(onSignIn);
                                         }
                                     }
