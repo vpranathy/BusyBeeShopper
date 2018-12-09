@@ -86,21 +86,25 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.ic_map:
                         Intent intent1 = new Intent(MainActivity.this, MapsActivity.class);
                         startActivity(intent1);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_split:
                         Intent intent2 = new Intent(MainActivity.this, SplitActivity.class);
                         startActivity(intent2);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_history:
                         Intent intent3 = new Intent(MainActivity.this, HistoryActivity.class);
                         startActivity(intent3);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_account:
                         Intent intent4 = new Intent(MainActivity.this, AccountActivity.class);
                         startActivity(intent4);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                 }
 

@@ -36,21 +36,25 @@ public class AccountActivity extends AppCompatActivity {
                     case R.id.ic_items:
                         Intent intent0 = new Intent(AccountActivity.this, MainActivity.class);
                         startActivity(intent0);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_map:
                         Intent intent1 = new Intent(AccountActivity.this, MapsActivity.class);
                         startActivity(intent1);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_split:
                         Intent intent2 = new Intent(AccountActivity.this, SplitActivity.class);
                         startActivity(intent2);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_history:
                         Intent intent3 = new Intent(AccountActivity.this, HistoryActivity.class);
                         startActivity(intent3);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_account:
