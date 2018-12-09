@@ -2,6 +2,7 @@ package com.example.mobileapp.busybeeshopper;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -32,7 +39,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     String deletedName;
     Integer deletedImg;
     String deletedByUser;
-
+    String username,userGroup;
+    int usertype;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid, ArrayList<String> addedBy) {
         this.context=thisContext;
@@ -40,6 +49,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.imgId=imgid;
         this.itemAdd=addedBy;
         Log.d(TAG, "RecyclerViewAdapter: lists "+itemList);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+        username=sharedPreferences.getString("username","nothing is passed");
+        userGroup=sharedPreferences.getString("group","nothing is passed");
+        usertype=sharedPreferences.getInt("type",100);
         inflater=LayoutInflater.from(thisContext);
     }
 
@@ -101,11 +114,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         alert.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String item= price.getText().toString();
-                String itemName=itemList.get(position);
-                String addedBy=itemAdd.get(position);
+                String itemPrice= price.getText().toString();
+                String itemName=delName;
+                String addedBy=delUser;
+                String [] temp= addedBy.split(" ");
+                addedBy=temp[2];
+                Log.d(TAG, "onClick: name"+addedBy);
 
-
+                final DatabaseReference myref = database.getReference(userGroup).child(addedBy).child(itemName);
+                myref.removeValue();
+                Log.d(TAG, "onClick: myref in delete "+myref.getKey());
+                String SplitGroup = "Split_"+userGroup;
+                DatabaseReference split = database.getReference(SplitGroup).child(itemName);
+                Group_Split newEntry = new Group_Split(addedBy,username,itemName,Integer.parseInt(itemPrice));
+                split.setValue(newEntry);
 
 
             }
@@ -126,6 +148,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     }
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
