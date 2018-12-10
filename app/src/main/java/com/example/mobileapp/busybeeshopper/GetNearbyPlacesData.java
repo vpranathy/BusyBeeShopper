@@ -141,12 +141,9 @@ public class GetNearbyPlacesData extends Service {
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
                         Notification noti = new Notification.Builder(getApplicationContext())
-                                .setContentTitle("Onr of the items you wish to purchase is available at " + placeName)
-                                .setContentText("Subject").setSmallIcon(R.drawable.bussybee)
+                                .setContentTitle("One of the items in list is available at "+placeName)
+                                .setContentText("Subject").setSmallIcon(R.drawable.busybeelogo)
                                 .setContentIntent(pIntent).build();
-                        //.addAction(R.drawable.icon, "Call")
-                        //.addAction(R.drawable.icon, "More", pIntent)
-                        //.addAction(R.drawable.icon, "And more", pIntent).build();
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         noti.defaults |= Notification.DEFAULT_SOUND;
 
@@ -297,6 +294,7 @@ public class GetNearbyPlacesData extends Service {
             neardata.add(new GetNearbyData());
             Log.d(TAG, "itemname"+items.get(i));
             String tofind = items.get(i);
+            tofind = tofind.replaceAll(" ","-");
             String url = getUrl(latitude, longitude, tofind);
             Log.d(TAG, "URL: " + url);
             Object[] DataTransfer = new Object[2];
