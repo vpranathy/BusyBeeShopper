@@ -10,16 +10,17 @@
         android:layout_height="50dp"
         android:id="@+id/userIcon"
         android:src="@drawable/ic_group"/>
+
     <TextView
         android:id="@+id/individualItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Data"
-        android:layout_toRightOf="@+id/userIcon"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="20dp"
-        android:textSize="15sp"
-        />
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/userIcon"
+        android:hint="Data"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/itemAddedBy"
@@ -27,8 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/individualItem"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="140dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="1dp"
         android:layout_toRightOf="@+id/individualItem"
         android:hint="User who added item"
@@ -40,7 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/individualItem"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/userIcon"
         android:hint="Item Description"
         android:textSize="10sp"/>
 

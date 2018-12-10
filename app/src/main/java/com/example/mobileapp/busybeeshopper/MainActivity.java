@@ -24,9 +24,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -253,9 +255,78 @@ public class MainActivity extends AppCompatActivity {
     /**** Function to create an alert dialogue to enter item name and description ******/
 
     private void createAlert() {
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        addItem= new EditText(this);
+        addItem.setHint("Item");
+        layout.addView(addItem);
+
+
+        itemDesc= new EditText(this);
+        itemDesc.setHint("Item Description");
+        layout.addView(itemDesc);
+
+
+
+        final AlertDialog ad1= new AlertDialog.Builder(this).setView(layout).setTitle("Enter item Details").setPositiveButton(android.R.string.ok,null).setNegativeButton(android.R.string.cancel,null).create();
+        ad1.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button button1 = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String item= addItem.getText().toString();
+                        String descText=itemDesc.getText().toString();
+
+                        if(!item.trim().isEmpty() || !descText.trim().isEmpty()) {
+                            if (usertype ==0) {
+                                myref = database.getReference("PersonalList").child(username);
+                            }else{
+                                myref =database.getReference(userGroup).child(username);
+                            }
+                            itemID= myref.push().getKey();
+                            Item newItem= new Item(descText,item,itemID);
+                            myref.child(item).setValue(newItem);
+                            populateList();
+                            ad1.dismiss();
+
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(),"Enter All Details",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ad1.dismiss();
+
+                    }
+                });
+            }
+        });
+        ad1.show();
+
+
+
+
+
+
+
+
+
+
+
+/*
         AlertDialog.Builder alert= new AlertDialog.Builder(this);
         alert.setTitle("Enter item");
-        /**Create layout of alert dialog box**/
+        */
+/**Create layout of alert dialog box**//*
+
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -304,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
         });
         ad= alert.create();
         ad.show();
+*/
 
     }
 
@@ -370,6 +442,7 @@ public class MainActivity extends AppCompatActivity {
                     items.clear();
                     itemImageID.clear();
                     itemAddBy.clear();
+                    itemD.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             for (DataSnapshot snaps : reference.getChildren()) {
@@ -377,14 +450,20 @@ public class MainActivity extends AppCompatActivity {
                                 items.add(snaps.child("itemName").getValue().toString());
                                 itemD.add(snaps.child("description").getValue().toString());
                                 Log.d(TAG, "onDataChange: name  " + snaps.child("itemName").getValue().toString());
+
                                 String add1 = "Added By: " + reference.getKey();
                                 Log.d(TAG, "onDataChange: username is" + add1);
                                 itemAddBy.add(add1);
                                 Log.d(TAG, "onDataChange: items are " + items);
                                 Log.d(TAG, "onDataChange: added by is" + itemAddBy);
+                                if(reference.getKey().equals(username)){
+                                    Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_person", "drawable",
+                                            MainActivity.this.getPackageName());
+                                    itemImageID.add(imageResourceId);
+                                }else{
                                 Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_group", "drawable",
                                         MainActivity.this.getPackageName());
-                                itemImageID.add(imageResourceId);
+                                itemImageID.add(imageResourceId);}
                             }
                         }
                         recyclerView.setAdapter(recyclerViewAdapter);

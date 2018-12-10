@@ -24,7 +24,7 @@ public class SplitAdapter extends RecyclerView.Adapter<SplitAdapter.ViewHolder3>
         this.mPerson = mPerson;
         this.mContext = mContext;
         this.flag1=flag;
-        Log.d(TAG, "SplitAdapter: testing"+mPerson.get(0).getUsernam().toString());
+        //Log.d(TAG, "SplitAdapter: testing"+mPerson.get(0).getUsernam().toString());
     }
 
     @NonNull
