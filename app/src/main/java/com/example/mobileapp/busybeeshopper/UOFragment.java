@@ -86,12 +86,12 @@ public class UOFragment extends Fragment {
                                 Log.d(TAG, "onDataChange: the amount owed to "+groupMembers.get(finalI)+" is "+amountOwed[0]);
                                 youOwe.add(new splitData(groupMembers.get(finalI),amountOwed[0]));
                             }
+                            if (youOwe.size()!=0) {
+                                SplitAdapter adapter = new SplitAdapter(getActivity(), youOwe,false);
+                                Log.d(TAG, "onDataChange: calling the adapter");
 
-                            SplitAdapter adapter = new SplitAdapter(getActivity(), youOwe);
-                            Log.d(TAG, "onDataChange: calling the adapter");
-
-                            recyclerView.setAdapter(adapter);
-
+                                recyclerView.setAdapter(adapter);
+                            }
                         }
 
                         @Override
