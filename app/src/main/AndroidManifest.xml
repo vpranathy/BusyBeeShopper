@@ -23,14 +23,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity"
+            android:launchMode="singleTask"
             android:parentActivityName=".LoginActivity">
 
         </activity>
-        <activity android:name=".AccountActivity" />
-        <activity android:name=".SplitActivity" />
-        <activity android:name=".HistoryActivity" />
+        <activity android:name=".AccountActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".SplitActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".HistoryActivity"
+            android:launchMode="singleTask"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -54,6 +65,7 @@
         </activity>
 
         <activity android:name=".MapsActivity"
+            android:launchMode="singleTask"
             android:label="AIzaSyC7lpgUWhgim2s7FneV4jrUTEYN-fAVIho"/>
         <service android:name=".GetNearbyPlacesData"
             android:enabled="true"/>
