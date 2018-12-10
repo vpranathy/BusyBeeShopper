@@ -117,6 +117,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onShow(DialogInterface dialog) {
                 Button button = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_POSITIVE);
                 Button button1 = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_NEGATIVE);
+                SharedPreferences sharedPreferences = context.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+                username=sharedPreferences.getString("username","nothing is passed");
+                userGroup=sharedPreferences.getString("group","nothing is passed");
+                usertype=sharedPreferences.getInt("type",100);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
