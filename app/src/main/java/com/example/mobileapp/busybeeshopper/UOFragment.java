@@ -60,50 +60,52 @@ public class UOFragment extends Fragment {
                 }
                 Log.d(TAG, "onCreateView: the group members are "+groupMembers);
 
-                for (int i= 0;i<groupMembers.size();i++){
-                    Query query = myref.orderByChild("addedBy").equalTo(username);
-                    Log.d(TAG, "onCreateView: getting the amount owed to "+groupMembers.get(i));
-                    final int finalI = i;
-                    final int[] amountOwed = new int[1];
-                    amountOwed[0]=0;
-                    query.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Log.d(TAG, "onDataChange: entering the query for getting the amount");
-                            if (dataSnapshot.exists()){
-                                for(DataSnapshot snaps : dataSnapshot.getChildren()){
-                                    Log.d(TAG, "onDataChange: "+snaps);
-                                    Group_Split split = snaps.getValue(Group_Split.class);
-                                    Log.d(TAG, "onDataChange: the amount of "+split.getItemName()+"  is "+split.getItemPrice());
+                for (int i= 0;i<groupMembers.size();i++) {
+                    if (!groupMembers.get(i).equals(usergroup)) {
+                        Query query = myref.orderByChild("addedBy").equalTo(username);
+                        Log.d(TAG, "onCreateView: getting the amount owed to " + groupMembers.get(i));
+                        final int finalI = i;
+                        final int[] amountOwed = new int[1];
+                        amountOwed[0] = 0;
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Log.d(TAG, "onDataChange: entering the query for getting the amount");
+                                if (dataSnapshot.exists()) {
+                                    for (DataSnapshot snaps : dataSnapshot.getChildren()) {
+                                        Log.d(TAG, "onDataChange: " + snaps);
+                                        Group_Split split = snaps.getValue(Group_Split.class);
+                                        Log.d(TAG, "onDataChange: the amount of " + split.getItemName() + "  is " + split.getItemPrice());
 
-                                    if (split.getBoughtBy().equals(groupMembers.get(finalI))) {
-                                        Log.d(TAG, "onDataChange: the amount of inside the compare statement "+split.getItemName()+"  is "+split.getItemPrice());
-                                        amountOwed[0] = amountOwed[0] + split.getItemPrice();
+                                        if (split.getBoughtBy().equals(groupMembers.get(finalI))) {
+                                            Log.d(TAG, "onDataChange: the amount of inside the compare statement " + split.getItemName() + "  is " + split.getItemPrice());
+                                            amountOwed[0] = amountOwed[0] + split.getItemPrice();
+
+                                        }
 
                                     }
-
+                                    Log.d(TAG, "onDataChange: the amount owed to " + groupMembers.get(finalI) + " is " + amountOwed[0]);
+                                    youOwe.add(new splitData(groupMembers.get(finalI), amountOwed[0]));
                                 }
-                                Log.d(TAG, "onDataChange: the amount owed to "+groupMembers.get(finalI)+" is "+amountOwed[0]);
-                                youOwe.add(new splitData(groupMembers.get(finalI),amountOwed[0]));
+                                if (youOwe.size() != 0) {
+                                    SplitAdapter adapter = new SplitAdapter(getActivity(), youOwe, false);
+                                    Log.d(TAG, "onDataChange: calling the adapter");
+
+                                    recyclerView.setAdapter(adapter);
+                                }
                             }
-                            if (youOwe.size()!=0) {
-                                SplitAdapter adapter = new SplitAdapter(getActivity(), youOwe,false);
-                                Log.d(TAG, "onDataChange: calling the adapter");
 
-                                recyclerView.setAdapter(adapter);
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                             }
-                        }
+                        });
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
+                    }
+
 
                 }
-
-
-
             }
 
             @Override

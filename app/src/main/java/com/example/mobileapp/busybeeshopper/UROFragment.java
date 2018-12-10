@@ -46,17 +46,17 @@ public class UROFragment extends Fragment {
         usertype = sharedPreferences.getInt("type", 100);
         final DatabaseReference myref = database.getReference("Split_" + usergroup);
         if (usertype==1){
-        DatabaseReference myref2 = database.getReference(usergroup);
-        myref2.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference myref2 = database.getReference("Users");
+        Query query = myref2.orderByChild("group").equalTo(usergroup);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                        Log.d(TAG, "onDataChange: reference for getting group members " + reference.getKey());
-                        groupMembers.add(reference.getKey());
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Users users = snaps.getValue(Users.class);
+                        groupMembers.add(users.getUsername());
                     }
                 }
-                Log.d(TAG, "onCreateView: the group members are " + groupMembers);
 
                 for (int i = 0; i < groupMembers.size(); i++) {
                     if (!groupMembers.get(i).equals(username)) {
@@ -76,7 +76,7 @@ public class UROFragment extends Fragment {
                                         Log.d(TAG, "onDataChange: the amount of " + split.getItemName() + "  is " + split.getItemPrice());
 
                                         if (split.getAddedBy().equals(groupMembers.get(finalI))) {
-                                            Log.d(TAG, "onDataChange: the amount of inside the compare statement " + split.getItemName() + "  is " + split.getItemPrice());
+                                            Log.d(TAG, "onDataChange: the amount  inside the compare statement " + split.getItemName() + "  is " + split.getItemPrice());
                                             amountOwed[0] = amountOwed[0] + split.getItemPrice();
 
                                         }
@@ -114,4 +114,4 @@ public class UROFragment extends Fragment {
     return rootView;
     }
 
-    }
+}
