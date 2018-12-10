@@ -141,8 +141,8 @@ public class GetNearbyPlacesData extends Service {
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
                         Notification noti = new Notification.Builder(getApplicationContext())
-                                .setContentTitle("One of the items in list is available at "+placeName)
-                                .setContentText("Subject").setSmallIcon(R.drawable.busybeelogo)
+                                .setContentTitle("Shopping alert")
+                                .setContentText("One of the items in list is available at "+placeName).setSmallIcon(R.drawable.busybeelogo)
                                 .setContentIntent(pIntent).build();
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         noti.defaults |= Notification.DEFAULT_SOUND;
