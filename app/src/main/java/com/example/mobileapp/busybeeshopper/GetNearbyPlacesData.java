@@ -33,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -60,6 +61,7 @@ public class GetNearbyPlacesData extends Service {
     double longitude;
     String googlePlacesData;
     public SQLiteDatabase database;
+    DatabaseReference getUserUpdate;
     GoogleMap mMap;
     String url;
     private static final String TAG = "GetNearbyPlacesData";
@@ -174,48 +176,59 @@ public class GetNearbyPlacesData extends Service {
             }
         };
 
-/*
-
-        locationListener3 = new LocationListener() {
-            @Override
-            public void onLocationChanged(final Location location) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                Log.d(TAG, "test location listener 3 ");
-
-
-
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-
-*/
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10000, locationListener1);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 20, locationListener2);
-        //retrievedata();
+        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+
+        username = sharedPreferences.getString("username", "nothing is passed");
+
+        getUserUpdate =mydatabase.getReference("Users");
+        Query query = getUserUpdate.orderByChild("username").equalTo(username);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Users updatedUser = snaps.getValue(Users.class);
+                        userGroup=updatedUser.getGroup();
+                        usertype=updatedUser.getType();
+                        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor=sharedPreferences.edit();
+                        editor.remove("group");
+                        editor.remove("type");
+                        editor.putString("group", userGroup );
+                        editor.putInt("type", usertype);
+                        editor.apply();
+                        funccallback();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
+
+
+
+
+
+    }
+
+    private void funccallback(){
         SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", "nothing is passed");
         userGroup = sharedPreferences.getString("group", "nothing is passed");
+        usertype = sharedPreferences.getInt("type", 0);
         Log.d(TAG, "onCreate: check "+username);
         Log.d(TAG, "onCreate: check "+userGroup);
         Log.d(TAG, "onCreate: check "+usertype);
+        if (usertype == 0) {
             DatabaseReference myref1 = mydatabase.getReference("PersonalList").child(username);
             myref1.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -223,7 +236,7 @@ public class GetNearbyPlacesData extends Service {
                     items.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                            Log.d(TAG, "onDataChange: "+items);
+                            Log.d(TAG, "onDataChange: " + items);
                             items.add(reference.child("itemName").getValue().toString());
                         }
                         callapi(items);
@@ -236,6 +249,8 @@ public class GetNearbyPlacesData extends Service {
 
                 }
             });
+        }
+        else {
             DatabaseReference myref2 = mydatabase.getReference(userGroup);
             myref2.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -243,9 +258,13 @@ public class GetNearbyPlacesData extends Service {
                     items.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                            items.add(reference.child("itemName").getValue().toString());
+                            for (DataSnapshot snaps : reference.getChildren())
+                            {
+                                items.add(snaps.getKey().toString());
+
+                            }
                         }
-                        Log.d(TAG, "onDataChange: "+items);
+                        Log.d(TAG, "onDataChange: " + items);
 
                         callapi(items);
 
@@ -257,13 +276,7 @@ public class GetNearbyPlacesData extends Service {
 
                 }
             });
-
-
-
-    }
-
-    private void retrievedata(){
-
+        }
     }
 
     private void callapi(ArrayList<String> items) {
