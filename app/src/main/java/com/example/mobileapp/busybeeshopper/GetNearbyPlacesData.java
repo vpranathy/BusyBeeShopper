@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -137,12 +139,13 @@ public class GetNearbyPlacesData extends Service {
                     float distance = location2.distanceTo(location);
                     if (distance < 20) {
                         // Build notification
-                        // Actions are just fake
+                        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.busybeelogo);
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
                         Notification noti = new Notification.Builder(getApplicationContext())
                                 .setContentTitle("Shopping alert")
                                 .setContentText("One of the items in list is available at "+placeName).setSmallIcon(R.drawable.busybeelogo)
+                                .setLargeIcon(largeIcon)
                                 .setContentIntent(pIntent).build();
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         noti.defaults |= Notification.DEFAULT_SOUND;
