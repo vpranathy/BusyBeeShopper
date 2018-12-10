@@ -46,9 +46,9 @@ public class UROFragment extends Fragment {
         usertype = sharedPreferences.getInt("type", 100);
         final DatabaseReference myref = database.getReference("Split_" + usergroup);
         if (usertype==1){
-        DatabaseReference myref2 = database.getReference("Users");
-        Query query = myref2.orderByChild("group").equalTo(usergroup);
-        query.addValueEventListener(new ValueEventListener() {
+            DatabaseReference myref2 = database.getReference("Users");
+            Query query = myref2.orderByChild("group").equalTo(usergroup);
+            query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){

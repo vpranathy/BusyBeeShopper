@@ -185,7 +185,6 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 newUser= addNewUser.getText().toString();
-
                 DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
                 myref5.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
