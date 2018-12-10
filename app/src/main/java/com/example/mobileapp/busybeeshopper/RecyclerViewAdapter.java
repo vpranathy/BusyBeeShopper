@@ -36,20 +36,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     LayoutInflater inflater;
     ArrayList<Integer> imgId;
     ArrayList<String> itemAdd;
+    ArrayList<String> itemDesc;
     EditText price;
     AlertDialog ad;
     String deletedName;
     Integer deletedImg;
     String deletedByUser;
+    String deletedDesc;
     String username,userGroup;
     int usertype;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid, ArrayList<String> addedBy) {
+    public RecyclerViewAdapter(Context thisContext, ArrayList<String> list, ArrayList<Integer> imgid, ArrayList<String> addedBy, ArrayList<String> itemD) {
         this.context=thisContext;
         this.itemList=list;
         this.imgId=imgid;
         this.itemAdd=addedBy;
+        this.itemDesc=itemD;
         Log.d(TAG, "RecyclerViewAdapter: lists "+itemList);
         SharedPreferences sharedPreferences = context.getSharedPreferences("UserData",Context.MODE_PRIVATE);
         username=sharedPreferences.getString("username","nothing is passed");
@@ -72,6 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Glide.with(context).asBitmap().load(imgId.get(i)).into(viewHolder.itemIcon);
         viewHolder.itemName.setText(itemList.get(i));
         viewHolder.itemAddedBy.setText(itemAdd.get(i));
+        viewHolder.itemDescription.setText(itemDesc.get(i));
 
     }
 
@@ -88,20 +92,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         deletedName=itemList.get(position);
         deletedImg=imgId.get(position);
         deletedByUser=itemAdd.get(position);
+        deletedDesc=itemDesc.get(position);
         int recentlyDeleted=position;
         itemList.remove(position);
         imgId.remove(position);
         itemAdd.remove(position);
+        itemDesc.remove(position);
         notifyItemRemoved(position);
 
 
 
-        createPurchaseAlert(position,recentlyDeleted,deletedName,deletedImg,deletedByUser);
+        createPurchaseAlert(position,recentlyDeleted,deletedName,deletedImg,deletedByUser, deletedDesc);
 
 
     }
 
-    private void createPurchaseAlert(final int position, final int recentlyDel, final String delName, final Integer delId, final String delUser) {
+    private void createPurchaseAlert(final int position, final int recentlyDel, final String delName, final Integer delId, final String delUser, final String delD) {
 
         /**Create layout of alert dialog box**/
         LinearLayout layout = new LinearLayout(context);
@@ -157,6 +163,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         itemList.add(recentlyDel,delName);
                         imgId.add(recentlyDel,delId);
                         itemAdd.add(recentlyDel,delUser);
+                        itemDesc.add(recentlyDel,delD);
                         notifyItemInserted(recentlyDel);
                         ad1.dismiss();
 
@@ -174,6 +181,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         CircleImageView itemIcon;
         TextView itemName;
         TextView itemAddedBy;
+        TextView itemDescription;
         RelativeLayout itemLayout;
 
         public ViewHolder(@NonNull View itemView) {
@@ -182,6 +190,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             itemName= itemView.findViewById(R.id.individualItem);
             itemAddedBy=itemView.findViewById(R.id.itemAddedBy);
             itemLayout=itemView.findViewById(R.id.layout_item);
+            itemDescription=itemView.findViewById(R.id.itemDescription);
 
         }
     }

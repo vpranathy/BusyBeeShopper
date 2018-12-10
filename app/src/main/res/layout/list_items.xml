@@ -34,5 +34,15 @@
         android:hint="User who added item"
         android:textSize="10sp" />
 
+    <TextView
+        android:id="@+id/itemDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/individualItem"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:hint="Item Description"
+        android:textSize="10sp"/>
+
 
 </RelativeLayout>
