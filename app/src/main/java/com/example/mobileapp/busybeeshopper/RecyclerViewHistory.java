@@ -14,11 +14,11 @@ import java.util.ArrayList;
 public class RecyclerViewHistory extends RecyclerView.Adapter<RecyclerViewHistory.ViewHolder1> {
     private static final String TAG = "RecyclerViewAdapter";
     Context context;
-    ArrayList<String> itemList;
+    ArrayList<Group_Split> itemList;
     LayoutInflater inflater;
 
 
-    public RecyclerViewHistory(Context thisContext, ArrayList<String> list){
+    public RecyclerViewHistory(Context thisContext, ArrayList<Group_Split> list){
         this.context=thisContext;
         this.itemList=list;
         inflater=LayoutInflater.from(thisContext);
@@ -34,7 +34,8 @@ public class RecyclerViewHistory extends RecyclerView.Adapter<RecyclerViewHistor
     @Override
     public void onBindViewHolder(@NonNull ViewHolder1 viewHolder, int i) {
 
-        viewHolder.itemName.setText("User ordered item "+itemList.get(i));
+        viewHolder.itemName.setText(itemList.get(i).getItemName()+"  added by "+itemList.get(i).getAddedBy()+" was bought by "+itemList.get(i).getBoughtBy()
+        +"  for $"+itemList.get(i).getItemPrice());
 
     }
 

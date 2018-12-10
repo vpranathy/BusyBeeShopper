@@ -1,6 +1,8 @@
 package com.example.mobileapp.busybeeshopper;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,27 +15,89 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 public class HistoryActivity extends AppCompatActivity {
-    ArrayList<String> historyItems= new ArrayList<>();
+
     RecyclerView recyclerView;
-    SampleDatabase db;
+    String username,userGroup, split_group;
+    int usertype;
     RecyclerViewHistory recyclerViewHistory;
+    SharedPreferences sharedPreferences;
+    ArrayList<Group_Split> history = new ArrayList<>();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myref,myref2;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-
-        /***************bottom code for text view to test menu****************************/
         /**Initialize objects**/
         recyclerView= (RecyclerView)findViewById(R.id.HistoryItems);
-        db= new SampleDatabase(this);
-        recyclerViewHistory= new RecyclerViewHistory(this,historyItems);
-        recyclerView.setAdapter(recyclerViewHistory);
+        recyclerViewHistory= new RecyclerViewHistory(this,history);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        populateHistory();
-        recyclerViewHistory.notifyDataSetChanged();
+        sharedPreferences = this.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        username=sharedPreferences.getString("username","nothing is passed");
+        userGroup=sharedPreferences.getString("group","nothing is passed");
+        usertype=sharedPreferences.getInt("type",100);
+        split_group="Split_"+userGroup;
+        myref = database.getReference(split_group);
+        Query query = myref.orderByChild("addedBy").equalTo(username);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Group_Split split = snaps.getValue(Group_Split.class);
+                        if (!split.getBoughtBy().equals(username)){
+                            history.add(split);
+                        }
+                    }
+                    recyclerView.setAdapter(recyclerViewHistory);
+                }
+
+                myref2=database.getReference(split_group);
+                Query query1 = myref2.orderByChild("boughtBy").equalTo(username);
+                query1.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                                Group_Split split1 =snapshot.getValue(Group_Split.class);
+                                if (!split1.getAddedBy().equals(username)){
+                                    history.add(split1);
+                                }
+                            }
+                        }
+                        recyclerView.setAdapter(recyclerViewHistory);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        /***************bottom code for text view to test menu****************************/
+
+
 
         /***************code for navigation bar below****************************/
 
@@ -83,11 +147,5 @@ public class HistoryActivity extends AppCompatActivity {
         /***************code for navigation bar ends here****************************/
     }
 
-    private void populateHistory() {
-        historyItems.clear();
-        Cursor data = db.getData();
-        while (data.moveToNext()) {
-            historyItems.add(data.getString(2));
-        }
-    }
+
 }
