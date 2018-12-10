@@ -43,10 +43,9 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="BusyBeeShoppers"
-                        android:textColor="@color/colorFawn"
-                        android:textColorHighlight="@color/colorAccent"
+                        android:textColor="@color/colorFinal"
                         android:textSize="20sp"
-                        android:textStyle="italic|bold"
+                        android:textStyle="bold"
                         />
 
                 </android.support.v7.widget.Toolbar>
@@ -72,10 +71,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="To Buy List"
-                android:textStyle="italic"
                 android:textSize="17sp"
                 android:textAlignment="center"
-                android:textColor="@color/colorLightBlue"
+                android:textColor="@color/colorFinal"
                 android:layout_alignParentTop="true"
 
                 />
