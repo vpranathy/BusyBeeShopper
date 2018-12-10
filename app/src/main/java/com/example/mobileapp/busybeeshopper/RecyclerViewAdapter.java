@@ -66,7 +66,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
+        Log.d(TAG, "onBindViewHolder: testing the on bind");
         Glide.with(context).asBitmap().load(imgId.get(i)).into(viewHolder.itemIcon);
         viewHolder.itemName.setText(itemList.get(i));
         viewHolder.itemAddedBy.setText(itemAdd.get(i));

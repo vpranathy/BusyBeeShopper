@@ -201,8 +201,9 @@ public class AccountActivity extends AppCompatActivity {
                             DatabaseReference userNew= database.getReference("Users").child(newUser);
                             userNew.child("group").setValue(userGroup);
                             userNew.child("type").setValue(userType);
+                        }else {
+                            Toast.makeText(getApplicationContext(), " No Such user Exists", Toast.LENGTH_LONG).show();
                         }
-                        Toast.makeText(getApplicationContext()," No Such user Exists",Toast.LENGTH_LONG).show();
                     }
 
                     @Override
