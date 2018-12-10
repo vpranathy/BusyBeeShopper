@@ -54,6 +54,7 @@ public class GetNearbyPlacesData extends Service {
     LocationListener locationListener1;
     LocationListener locationListener2;
     LocationListener locationListener3;
+    Location loc;
     Location l;
     double latitude;
     double longitude;
@@ -75,10 +76,6 @@ public class GetNearbyPlacesData extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: service calle");
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        l= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Log.d(TAG, "onCreate: location lat: in service "+ l.getLatitude());
-
-
         locationListener1 = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -86,6 +83,13 @@ public class GetNearbyPlacesData extends Service {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.d(TAG, "onLocationChanged: " + latitude);
+                SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.remove("latitude");
+                editor.remove("longitude");
+                editor.putString("latitude", Double.toString(latitude));
+                editor.putString("longitude",Double.toString(longitude));
+                editor.apply();
                 if (items.size() != 0) {
                     callapi(items);
 
@@ -263,9 +267,14 @@ public class GetNearbyPlacesData extends Service {
     private void callapi(ArrayList<String> items) {
         Log.d(TAG, "test api called");
 
-        Log.d(TAG, "callapi latitude in call api"+l.getLatitude());
         database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
         database.execSQL("DROP TABLE IF EXISTS ENTRIES");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String lat = sharedPreferences.getString("latitude", "nothing is passed");
+        String lon = sharedPreferences.getString("longitude", "nothing is passed");
+        latitude = Double.parseDouble(lat);
+        longitude = Double.parseDouble(lon);
         ArrayList<GetNearbyData> neardata = new ArrayList<GetNearbyData>();
         for(int i =0; i<items.size();i++)
         {
@@ -273,7 +282,7 @@ public class GetNearbyPlacesData extends Service {
             neardata.add(new GetNearbyData());
             Log.d(TAG, "itemname"+items.get(i));
             String tofind = items.get(i);
-            String url = getUrl(l.getLatitude(), l.getLongitude(), tofind);
+            String url = getUrl(latitude, longitude, tofind);
             Log.d(TAG, "URL: " + url);
             Object[] DataTransfer = new Object[2];
             DataTransfer[0] = mMap;
