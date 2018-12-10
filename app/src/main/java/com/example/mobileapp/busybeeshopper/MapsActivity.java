@@ -183,18 +183,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions();
         ////Ye line check kar
         SQLiteDatabase database = openOrCreateDatabase("mydata",MODE_PRIVATE,null);
-        database.execSQL("CREATE TABLE IF NOT EXISTS Entries(Latitude DOUBLE,Longitude DOUBLE,Name VARCHAR,Vicinity VARCHAR)");
+        database.execSQL("CREATE TABLE IF NOT EXISTS Entries(Latitude DOUBLE,Longitude DOUBLE,Name VARCHAR)");
         Cursor c = database.rawQuery("Select * from Entries", null);
         int Latitude = c.getColumnIndex("Latitude");
         int Longitude = c.getColumnIndex("Longitude");
         int name = c.getColumnIndex("Name");
-        int Vicinity = c.getColumnIndex("Vicinity");
         while (c.moveToNext()){
             LatLng latLng = new LatLng(c.getDouble(Latitude),c.getDouble(Longitude));
             String placeName = c.getString(name);
-            String vicinity = c.getString(Vicinity);
             markerOptions.position(latLng);
-            markerOptions.title(placeName + " : " + vicinity);
+            markerOptions.title(placeName);
             Log.d(TAG, "ShowNearbyPlaces: "+placeName);
             mMap.addMarker(markerOptions);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));

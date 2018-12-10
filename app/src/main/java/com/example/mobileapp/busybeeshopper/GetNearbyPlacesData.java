@@ -126,14 +126,12 @@ public class GetNearbyPlacesData extends Service {
                 int Latitude = c.getColumnIndex("Latitude");
                 int Longitude = c.getColumnIndex("Longitude");
                 int name = c.getColumnIndex("Name");
-                int Vicinity = c.getColumnIndex("Vicinity");
                 while (c.moveToNext()) {
                     LatLng latLng = new LatLng(c.getDouble(Latitude), c.getDouble(Longitude));
                     Location location2 = new Location("");
                     location2.setLongitude(c.getDouble(Longitude));
                     location2.setLatitude(c.getDouble(Latitude));
                     String placeName = c.getString(name);
-                    String vicinity = c.getString(Vicinity);
                     float distance = location2.distanceTo(location);
                     if (distance < 20) {
                         // Build notification
@@ -215,7 +213,9 @@ public class GetNearbyPlacesData extends Service {
         SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", "nothing is passed");
         userGroup = sharedPreferences.getString("group", "nothing is passed");
-        if (usertype == 0) {
+        Log.d(TAG, "onCreate: check "+username);
+        Log.d(TAG, "onCreate: check "+userGroup);
+        Log.d(TAG, "onCreate: check "+usertype);
             DatabaseReference myref1 = mydatabase.getReference("PersonalList").child(username);
             myref1.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -223,6 +223,7 @@ public class GetNearbyPlacesData extends Service {
                     items.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: "+items);
                             items.add(reference.child("itemName").getValue().toString());
                         }
                         callapi(items);
@@ -235,9 +236,8 @@ public class GetNearbyPlacesData extends Service {
 
                 }
             });
-        } else {
-            DatabaseReference myref1 = mydatabase.getReference("PersonalList").child(userGroup);
-            myref1.addValueEventListener(new ValueEventListener() {
+            DatabaseReference myref2 = mydatabase.getReference(userGroup);
+            myref2.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     items.clear();
@@ -245,6 +245,8 @@ public class GetNearbyPlacesData extends Service {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             items.add(reference.child("itemName").getValue().toString());
                         }
+                        Log.d(TAG, "onDataChange: "+items);
+
                         callapi(items);
 
                     }
@@ -256,7 +258,7 @@ public class GetNearbyPlacesData extends Service {
                 }
             });
 
-        }
+
 
     }
 
@@ -344,10 +346,10 @@ public class GetNearbyPlacesData extends Service {
                 double lng = Double.parseDouble(googlePlace.get("lng"));
                 String placeName = googlePlace.get("place_name");
                 placeName = placeName.replaceAll("'","");
-                String vicinity = googlePlace.get("vicinity");
+                //String vicinity = googlePlace.get("vicinity");
                 SQLiteDatabase database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
-                database.execSQL("CREATE TABLE IF NOT EXISTS Entries(Latitude DOUBLE,Longitude DOUBLE,Name VARCHAR,Vicinity VARCHAR)");
-                database.execSQL("INSERT INTO Entries(Latitude,Longitude, Name,Vicinity) VALUES ('"+lat+"','"+lng+"','"+placeName+"', '"+vicinity+"')");
+                database.execSQL("CREATE TABLE IF NOT EXISTS Entries(Latitude DOUBLE,Longitude DOUBLE,Name VARCHAR)");
+                database.execSQL("INSERT INTO Entries(Latitude,Longitude, Name) VALUES ('"+lat+"','"+lng+"','"+placeName+"')");
 
                 Log.d("GooglePlacesReadTask", "onPostExecute Exit");
             }
