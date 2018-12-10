@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> items= new ArrayList<>();
     ArrayList<Integer> itemImageID= new ArrayList<>();
     ArrayList<String> itemAddBy= new ArrayList<>();
+    ArrayList<String> itemD= new ArrayList<>();
     RecyclerView recyclerView;
     EditText addItem;
     EditText itemDesc;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView addbtn= (ImageView)findViewById(R.id.addButton);
         recyclerView = (RecyclerView) findViewById(R.id.listOfItems);
         db= new SampleDatabase(this);
-        recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID,itemAddBy);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, items,itemImageID,itemAddBy, itemD);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ItemTouchHelper itemTouchHelper= new ItemTouchHelper(new SwipeToDeleteCallback(recyclerViewAdapter));
@@ -310,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
         items.clear();
         itemImageID.clear();
         itemAddBy.clear();
+        itemD.clear();
         Log.d(TAG, "populateList: items "+items);
         Log.d(TAG, "populateList: addeby "+itemAddBy);
         if (usertype == 0) {
@@ -322,10 +324,12 @@ public class MainActivity extends AppCompatActivity {
                     items.clear();
                     itemImageID.clear();
                     itemAddBy.clear();
+                    itemD.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             Log.d(TAG, "onDataChange:  " + reference);
                             items.add(reference.child("itemName").getValue().toString());
+                            itemD.add(reference.child("description").getValue().toString());
                             Log.d(TAG, "onDataChange: name  " + reference.child("itemName").getValue().toString());
                             String add1 = "Added By: " + username;
                             Log.d(TAG, "onDataChange: username is" + add1);
@@ -371,13 +375,14 @@ public class MainActivity extends AppCompatActivity {
                             for (DataSnapshot snaps : reference.getChildren()) {
                                 Log.d(TAG, "onDataChange: " + snaps);
                                 items.add(snaps.child("itemName").getValue().toString());
+                                itemD.add(snaps.child("description").getValue().toString());
                                 Log.d(TAG, "onDataChange: name  " + snaps.child("itemName").getValue().toString());
                                 String add1 = "Added By: " + reference.getKey();
                                 Log.d(TAG, "onDataChange: username is" + add1);
                                 itemAddBy.add(add1);
                                 Log.d(TAG, "onDataChange: items are " + items);
                                 Log.d(TAG, "onDataChange: added by is" + itemAddBy);
-                                Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_person", "drawable",
+                                Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_group", "drawable",
                                         MainActivity.this.getPackageName());
                                 itemImageID.add(imageResourceId);
                             }
