@@ -121,21 +121,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     @Override
                     public void onClick(View v) {
                         String itemPrice= price.getText().toString();
-                        if(!itemPrice.trim().isEmpty()){
+                        if(!itemPrice.trim().isEmpty()) {
                             String itemName = delName;
                             String addedBy = delUser;
                             String[] temp = addedBy.split(" ");
                             addedBy = temp[2];
                             Log.d(TAG, "onClick: name" + addedBy);
+                            DatabaseReference myref = null;
+                            if (!username.equals(userGroup)) {
+                                myref = database.getReference(userGroup).child(addedBy).child(itemName);
+                                myref.removeValue();
+                                Log.d(TAG, "onClick: myref in delete " + myref.getKey());
+                                String SplitGroup = "Split_" + userGroup;
+                                DatabaseReference split = database.getReference(SplitGroup).child(itemName);
+                                Group_Split newEntry = new Group_Split(addedBy, username, itemName, Integer.parseInt(itemPrice));
+                                split.setValue(newEntry);
+                                ad1.dismiss();
+                            }else{
+                                DatabaseReference delPersonal = database.getReference("PersonalList").child(username);
+                                delPersonal.child(itemName).removeValue();
+                                ad1.dismiss();
+                            }
 
-                            final DatabaseReference myref = database.getReference(userGroup).child(addedBy).child(itemName);
-                            myref.removeValue();
-                            Log.d(TAG, "onClick: myref in delete " + myref.getKey());
-                            String SplitGroup = "Split_" + userGroup;
-                            DatabaseReference split = database.getReference(SplitGroup).child(itemName);
-                            Group_Split newEntry = new Group_Split(addedBy, username, itemName, Integer.parseInt(itemPrice));
-                            split.setValue(newEntry);
-                            ad1.dismiss();
 
                         }
                         else {

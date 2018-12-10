@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +31,7 @@ public class UOFragment extends Fragment {
     ArrayList<String> groupMembers = new ArrayList<>();
     FirebaseDatabase database= FirebaseDatabase.getInstance();
     String username, usergroup;
-
+    private LinearLayoutManager manager= new LinearLayoutManager(getActivity());
     int usertype;
     public UOFragment() {
         // Required empty public constructor
@@ -41,6 +42,7 @@ public class UOFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_uo,container,false);
         final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.UOnames);
+        recyclerView.setLayoutManager(manager);
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("UserData",Context.MODE_PRIVATE);
         username=sharedPreferences.getString("username","nothing is passed");
         usergroup=sharedPreferences.getString("group","nothing is passed");
@@ -85,8 +87,9 @@ public class UOFragment extends Fragment {
                                 youOwe.add(new splitData(groupMembers.get(finalI),amountOwed[0]));
                             }
 
-                            SplitAdapter adapter = new SplitAdapter(getContext(), youOwe);
+                            SplitAdapter adapter = new SplitAdapter(getActivity(), youOwe);
                             Log.d(TAG, "onDataChange: calling the adapter");
+
                             recyclerView.setAdapter(adapter);
 
                         }
@@ -108,9 +111,9 @@ public class UOFragment extends Fragment {
 
             }
         });
-
+        Log.d(TAG, "onCreateView: return fragment");
         //search for added by as the current user's name, get the bought by and the the price
-        return inflater.inflate(R.layout.fragment_uo, container, false);
+        return rootView;
     }
 
 }

@@ -19,7 +19,7 @@ public class SplitAdapter extends RecyclerView.Adapter<SplitAdapter.ViewHolder3>
     private Context mContext;
 
     public SplitAdapter(Context mContext, ArrayList<splitData> mPerson ) {
-        Log.d(TAG, "SplitAdapter: called constructer");
+        Log.d(TAG, "SplitAdapter: called constructor");
         this.mPerson = mPerson;
         this.mContext = mContext;
         Log.d(TAG, "SplitAdapter: testing"+mPerson.get(0).getUsernam().toString());
@@ -28,7 +28,7 @@ public class SplitAdapter extends RecyclerView.Adapter<SplitAdapter.ViewHolder3>
     @NonNull
     @Override
     public ViewHolder3 onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.split_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.split_item, parent, false);
         ViewHolder3 holder = new ViewHolder3(view);
         return holder;
 
@@ -37,7 +37,7 @@ public class SplitAdapter extends RecyclerView.Adapter<SplitAdapter.ViewHolder3>
     @Override
     public void onBindViewHolder(@NonNull ViewHolder3 viewHolder3, int i) {
         Log.d(TAG, "onBindViewHolder: in the viewHolder");
-        String Name = mPerson.get(i).getUsernam();
+        String Name ="You owe "+ mPerson.get(i).getUsernam();
         int Amount = mPerson.get(i).getAmount();
         viewHolder3.person.setText(Name);
         viewHolder3.amount.setText(Integer.toString(Amount));

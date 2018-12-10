@@ -109,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
                         Users updatedUser = snaps.getValue(Users.class);
                         userGroup=updatedUser.getGroup();
                         usertype=updatedUser.getType();
+                        SharedPreferences.Editor edit = sharedPreferences.edit();
+                        edit.remove("group");
+                        edit.remove("type");
+                        edit.putString("group", userGroup);
+                        edit.putInt("type",usertype);
+                        edit.apply();
                         populateList();
                     }
                 }
