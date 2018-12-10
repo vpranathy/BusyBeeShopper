@@ -377,14 +377,20 @@ public class MainActivity extends AppCompatActivity {
                                 items.add(snaps.child("itemName").getValue().toString());
                                 itemD.add(snaps.child("description").getValue().toString());
                                 Log.d(TAG, "onDataChange: name  " + snaps.child("itemName").getValue().toString());
+
                                 String add1 = "Added By: " + reference.getKey();
                                 Log.d(TAG, "onDataChange: username is" + add1);
                                 itemAddBy.add(add1);
                                 Log.d(TAG, "onDataChange: items are " + items);
                                 Log.d(TAG, "onDataChange: added by is" + itemAddBy);
+                                if(reference.getKey().equals(username)){
+                                    Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_person", "drawable",
+                                            MainActivity.this.getPackageName());
+                                    itemImageID.add(imageResourceId);
+                                }else{
                                 Integer imageResourceId = MainActivity.this.getResources().getIdentifier("ic_group", "drawable",
                                         MainActivity.this.getPackageName());
-                                itemImageID.add(imageResourceId);
+                                itemImageID.add(imageResourceId);}
                             }
                         }
                         recyclerView.setAdapter(recyclerViewAdapter);
