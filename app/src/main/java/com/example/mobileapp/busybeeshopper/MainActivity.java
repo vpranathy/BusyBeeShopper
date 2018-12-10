@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -49,18 +51,22 @@ public class MainActivity extends AppCompatActivity {
     RecyclerViewAdapter recyclerViewAdapter;
     SampleDatabase db;
     String itemID;
-
+    LocationManager lm;
+    LocationListener locationlistener;
+    Location loc;
     //firebase
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myref;
     DatabaseReference getUserUpdate;
-
+    SharedPreferences sharedPreferences;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+
+                //startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,0,locationlistener);
 
                 Log.i(TAG, "PERMISSION CHECK");
 
@@ -70,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -79,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
             /***************bottom code for text view to test menu****************************/
 
         /** Initialize items **/
-        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+        sharedPreferences = MainActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+
         username=sharedPreferences.getString("username","nothing is passed");
         userGroup=sharedPreferences.getString("group","nothing is passed");
         usertype=sharedPreferences.getInt("type",100);
@@ -171,20 +178,71 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        lm= (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationlistener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "onLocationChanged: main"+ location);
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
+                Log.d(TAG, "onLocationChanged: check location"+Double.toString(latitude));
+                sharedPreferences = MainActivity.this.getSharedPreferences("UserData",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("latitude", Double.toString(latitude));
+                editor.putString("longitude",Double.toString(longitude));
+                editor.apply();
 
+                getCurrentLocation(location);
+
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }else{
-            Log.d(TAG, "onCreate: permission granted");
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,0,locationlistener);
+
+        }
+
+
+    }
+
+    private void getCurrentLocation(Location location) {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }else{
+            Log.d(TAG, "getCurrentLocation: inside "+location);
+
+            //Location l= lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
+            lm.removeUpdates(locationlistener);
+            lm = null;
+            Log.d(TAG, "getCurrentLocation: after service call");
+            //startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
 
             // Write you code here if permission already given.
         }
 
 
-
     }
+
     /**** Function to create an alert dialogue to enter item name and description ******/
 
     private void createAlert() {

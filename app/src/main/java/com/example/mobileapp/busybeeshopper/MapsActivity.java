@@ -77,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case R.id.ic_items:
                         Intent intent0 = new Intent(MapsActivity.this, MainActivity.class);
                         startActivity(intent0);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_map:
@@ -86,16 +87,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case R.id.ic_split:
                         Intent intent2 = new Intent(MapsActivity.this, SplitActivity.class);
                         startActivity(intent2);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_history:
                         Intent intent3 = new Intent(MapsActivity.this, HistoryActivity.class);
                         startActivity(intent3);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
 
                     case R.id.ic_account:
                         Intent intent4 = new Intent(MapsActivity.this, AccountActivity.class);
                         startActivity(intent4);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                 }
 
@@ -146,9 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.d(TAG, "onLocationChanged: " +latitude);
-                LatLng sydney = new LatLng(latitude, longitude);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                ShowNearbyPlaces();
+
 
 
 
@@ -170,8 +172,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        LatLng sydney = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        ShowNearbyPlaces();
     }
 
     public void ShowNearbyPlaces() {

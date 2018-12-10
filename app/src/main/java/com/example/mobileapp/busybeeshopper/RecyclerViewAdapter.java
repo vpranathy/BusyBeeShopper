@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
@@ -100,8 +102,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     private void createPurchaseAlert(final int position, final int recentlyDel, final String delName, final Integer delId, final String delUser) {
-        AlertDialog.Builder alert= new AlertDialog.Builder(context);
-        alert.setTitle("Enter Price of purchased item");
+
         /**Create layout of alert dialog box**/
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -110,42 +111,53 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         price.setHint("Enter Price");
         layout.addView(price);
 
-        alert.setView(layout);
-        alert.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+        final AlertDialog ad1= new AlertDialog.Builder(context).setView(layout).setTitle("Enter item Price").setPositiveButton(android.R.string.ok,null).setNegativeButton(android.R.string.cancel,null).create();
+        ad1.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String itemPrice= price.getText().toString();
-                String itemName=delName;
-                String addedBy=delUser;
-                String [] temp= addedBy.split(" ");
-                addedBy=temp[2];
-                Log.d(TAG, "onClick: name"+addedBy);
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button button1 = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String itemPrice= price.getText().toString();
+                        if(!itemPrice.trim().isEmpty()){
+                            String itemName = delName;
+                            String addedBy = delUser;
+                            String[] temp = addedBy.split(" ");
+                            addedBy = temp[2];
+                            Log.d(TAG, "onClick: name" + addedBy);
 
-                final DatabaseReference myref = database.getReference(userGroup).child(addedBy).child(itemName);
-                myref.removeValue();
-                Log.d(TAG, "onClick: myref in delete "+myref.getKey());
-                String SplitGroup = "Split_"+userGroup;
-                DatabaseReference split = database.getReference(SplitGroup).child(itemName);
-                Group_Split newEntry = new Group_Split(addedBy,username,itemName,Integer.parseInt(itemPrice));
-                split.setValue(newEntry);
+                            final DatabaseReference myref = database.getReference(userGroup).child(addedBy).child(itemName);
+                            myref.removeValue();
+                            Log.d(TAG, "onClick: myref in delete " + myref.getKey());
+                            String SplitGroup = "Split_" + userGroup;
+                            DatabaseReference split = database.getReference(SplitGroup).child(itemName);
+                            Group_Split newEntry = new Group_Split(addedBy, username, itemName, Integer.parseInt(itemPrice));
+                            split.setValue(newEntry);
+                            ad1.dismiss();
 
+                        }
+                        else {
+                            Toast.makeText(context,"Enter Price",Toast.LENGTH_SHORT).show();
+                        }
 
+                    }
+                });
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        itemList.add(recentlyDel,delName);
+                        imgId.add(recentlyDel,delId);
+                        itemAdd.add(recentlyDel,delUser);
+                        notifyItemInserted(recentlyDel);
+                        ad1.dismiss();
+
+                    }
+                });
             }
         });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                itemList.add(recentlyDel,delName);
-                imgId.add(recentlyDel,delId);
-                itemAdd.add(recentlyDel,delUser);
-                notifyItemInserted(recentlyDel);
-                dialog.dismiss();
-
-            }
-        });
-        ad= alert.create();
-        ad.show();
-
+        ad1.show();
 
     }
 
