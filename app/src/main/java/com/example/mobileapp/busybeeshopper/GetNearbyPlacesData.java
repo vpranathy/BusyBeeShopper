@@ -40,19 +40,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.database.Cursor;
 
 
 public class GetNearbyPlacesData extends Service {
     private int PROXIMITY_RADIUS = 50;
-    LocationManager locationManager1;
-    LocationManager locationManager2;
-    LocationManager locationManager3;
+    LocationManager locationManager;
+/*    LocationManager locationManager2;
+    LocationManager locationManager3;*/
 
     LocationListener locationListener1;
     LocationListener locationListener2;
     LocationListener locationListener3;
+    Location l;
     double latitude;
     double longitude;
     String googlePlacesData;
@@ -72,9 +74,10 @@ public class GetNearbyPlacesData extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: service calle");
-        locationManager1 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager2 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager3 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        l= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Log.d(TAG, "onCreate: location lat: in service "+ l.getLatitude());
+
 
         locationListener1 = new LocationListener() {
             @Override
@@ -169,6 +172,7 @@ public class GetNearbyPlacesData extends Service {
             }
         };
 
+/*
 
         locationListener3 = new LocationListener() {
             @Override
@@ -197,10 +201,12 @@ public class GetNearbyPlacesData extends Service {
             }
         };
 
+*/
 
-        locationManager1.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10000, locationListener1);
-        locationManager2.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 20, locationListener2);
-        locationManager3.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener3);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10000, locationListener1);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 20, locationListener2);
+        //retrievedata();
+
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", "nothing is passed");
@@ -210,10 +216,9 @@ public class GetNearbyPlacesData extends Service {
             myref1.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                    items.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                            items.clear();
                             items.add(reference.child("itemName").getValue().toString());
                         }
                         callapi(items);
@@ -231,10 +236,9 @@ public class GetNearbyPlacesData extends Service {
             myref1.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                    items.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
-                            items.clear();
                             items.add(reference.child("itemName").getValue().toString());
                         }
                         callapi(items);
@@ -252,23 +256,29 @@ public class GetNearbyPlacesData extends Service {
 
     }
 
+    private void retrievedata(){
+
+    }
+
     private void callapi(ArrayList<String> items) {
         Log.d(TAG, "test api called");
 
-        Log.d(TAG, "callapi latitude "+latitude);
+        Log.d(TAG, "callapi latitude in call api"+l.getLatitude());
         database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
         database.execSQL("DROP TABLE IF EXISTS ENTRIES");
-        GetNearbyData getNearbyPlacesData = new GetNearbyData();
+        ArrayList<GetNearbyData> neardata = new ArrayList<GetNearbyData>();
         for(int i =0; i<items.size();i++)
         {
-            Log.d(TAG, "callapi: "+latitude);
+            //GetNearbyData getNearbyPlacesData = new GetNearbyData();
+            neardata.add(new GetNearbyData());
+            Log.d(TAG, "itemname"+items.get(i));
             String tofind = items.get(i);
-            String url = getUrl(latitude, longitude, tofind);
+            String url = getUrl(l.getLatitude(), l.getLongitude(), tofind);
             Log.d(TAG, "URL: " + url);
             Object[] DataTransfer = new Object[2];
             DataTransfer[0] = mMap;
             DataTransfer[1] = url;
-            getNearbyPlacesData.execute(DataTransfer);
+            neardata.get(i).execute(DataTransfer);
 
         }
 
@@ -295,7 +305,7 @@ public class GetNearbyPlacesData extends Service {
     }
 
 
-    private class GetNearbyData extends AsyncTask<Object, String, String> {
+    public class GetNearbyData extends AsyncTask<Object, String, String> {
         @Override
         protected String doInBackground(Object... params) {
             try {

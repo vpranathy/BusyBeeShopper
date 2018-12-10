@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -176,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }else{
-            Log.d(TAG, "onCreate: permission granted");
+
+
             startService(new Intent(MainActivity.this, GetNearbyPlacesData.class));
 
             // Write you code here if permission already given.
