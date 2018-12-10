@@ -150,7 +150,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.d(TAG, "onLocationChanged: " +latitude);
-
+                LatLng sydney = new LatLng(latitude, longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                locationManager.removeUpdates(locationListener);
+                locationManager=null;
 
 
 
@@ -173,8 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        LatLng sydney = new LatLng(latitude, longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
         ShowNearbyPlaces();
     }
 
