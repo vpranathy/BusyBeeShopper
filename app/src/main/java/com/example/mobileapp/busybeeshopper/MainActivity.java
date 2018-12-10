@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
                     items.clear();
                     itemImageID.clear();
                     itemAddBy.clear();
+                    itemD.clear();
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             for (DataSnapshot snaps : reference.getChildren()) {
