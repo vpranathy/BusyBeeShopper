@@ -234,6 +234,8 @@ public class GetNearbyPlacesData extends Service {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     items.clear();
+                    database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
+                    database.execSQL("DROP TABLE IF EXISTS ENTRIES");
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             Log.d(TAG, "onDataChange: " + items);
@@ -256,6 +258,8 @@ public class GetNearbyPlacesData extends Service {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     items.clear();
+                    database = openOrCreateDatabase("mydata", MODE_PRIVATE,null);
+                    database.execSQL("DROP TABLE IF EXISTS ENTRIES");
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot reference : dataSnapshot.getChildren()) {
                             for (DataSnapshot snaps : reference.getChildren())
