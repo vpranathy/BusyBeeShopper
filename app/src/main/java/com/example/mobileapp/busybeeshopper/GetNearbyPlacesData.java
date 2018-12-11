@@ -139,7 +139,7 @@ public class GetNearbyPlacesData extends Service {
                     float distance = location2.distanceTo(location);
                     if (distance < 20) {
                         // Build notification
-                        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.busybeelogo);
+                        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.beeicon);
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
                         Notification noti = new Notification.Builder(getApplicationContext())
