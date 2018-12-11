@@ -56,8 +56,7 @@ public class AccountActivity extends AppCompatActivity {
         leave=findViewById(R.id.Leave);
         recyclerView=findViewById(R.id.groupMembers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //TextView title = (TextView) findViewById(R.id.tva);
-        //title.setText("This is Account Activity");
+
 
         //Getting sharedPreferences
         final SharedPreferences sharedPreferences = AccountActivity.this.getSharedPreferences("UserData", Context.MODE_PRIVATE);
@@ -164,7 +163,7 @@ public class AccountActivity extends AppCompatActivity {
         Log.d(TAG, "getgroup: called");
         members.clear();
         Query memQuery = myref3.orderByChild("group").equalTo(userGroup);
-        memQuery.addValueEventListener(new ValueEventListener() {
+        memQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
@@ -206,6 +205,7 @@ public class AccountActivity extends AppCompatActivity {
                 myref4.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d(TAG, "onDataChange: removing from personal list");
                         if (dataSnapshot.exists()){
                             for (DataSnapshot snaps: dataSnapshot.getChildren()){
                                 String Name = snaps.child("itemName").getValue().toString();
@@ -263,6 +263,7 @@ public class AccountActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
+                            Log.d(TAG, "onDataChange: entering");
                             DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
                             myref5.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -276,6 +277,11 @@ public class AccountActivity extends AppCompatActivity {
                                             database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
                                         }
                                         database.getReference("PersonalList").child(newUser).removeValue();
+                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
+                                        userNew.child("group").setValue(userGroup);
+                                        userNew.child("type").setValue(userType);
+                                    }
+                                    else{
                                         DatabaseReference userNew = database.getReference("Users").child(newUser);
                                         userNew.child("group").setValue(userGroup);
                                         userNew.child("type").setValue(userType);
@@ -316,16 +322,17 @@ public class AccountActivity extends AppCompatActivity {
         leave.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
-                        Log.d(TAG, "onDataChange: the item is"+snaps);
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: the item is" + snaps);
                         String Name = snaps.child("itemName").getValue().toString();
                         String ID = snaps.child("itemID").getValue().toString();
                         String description = snaps.child("description").getValue().toString();
                         Item newItem = new Item(description, Name, ID);
-                        Log.d(TAG, "onDataChange: the new item to the personal list when leaving is "+newItem.getItemName());
+                        Log.d(TAG, "onDataChange: the new item to the personal list when leaving is " + newItem.getItemName());
                         database.getReference("PersonalList").child(userName).child(Name).setValue(newItem);
                     }
+                }
                     database.getReference(userGroup).child(userName).removeValue();
                     userGroup=userName;
                     userType=0;
@@ -337,8 +344,9 @@ public class AccountActivity extends AppCompatActivity {
                     editor.remove("type");
                     editor.putString("group",userGroup);
                     editor.putInt("type",userType);
+                    Log.d(TAG, "onDataChange: the type anf group is "+userType+"  "+userGroup);
                     editor.apply();
-                }
+
             }
 
             @Override
