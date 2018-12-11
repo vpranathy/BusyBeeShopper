@@ -37,11 +37,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
+            <TextView
+                android:id="@+id/accountTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="Group Members"
+                android:textSize="17sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorFinal"
+                />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/groupnames"
+                android:id="@+id/groupMembers"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/accountTitle"
 
                 >
 
@@ -58,14 +69,16 @@
             android:layout_above="@+id/bottomBar"
             android:padding="50sp"
             >
+
             <Button
 
+                android:id="@+id/Create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:id="@+id/Create"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:onClick="CreateGroup"
-                android:text="Create Group"/>
+                android:text="Create Group" />
             <Button
 
                 android:layout_width="wrap_content"
@@ -80,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/Leave"
+                android:visibility="invisible"
                 android:onClick="leaveGroup"
                 android:text="Leave Group"/>
         </RelativeLayout>

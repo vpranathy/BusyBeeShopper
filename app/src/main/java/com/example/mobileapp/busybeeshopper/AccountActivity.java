@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +26,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class AccountActivity extends AppCompatActivity {
     private static final String TAG = "AccountActivity";
@@ -34,10 +39,12 @@ public class AccountActivity extends AppCompatActivity {
     int userType;
     EditText addNewUser;
     Long finalGroupNumber;
+    ArrayList<String> members = new ArrayList<>();
     AlertDialog ad;
+    RecyclerView recyclerView;
     //firebase
     FirebaseDatabase database=FirebaseDatabase.getInstance();
-    DatabaseReference myref2;
+    DatabaseReference myref2, myref3;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -47,21 +54,51 @@ public class AccountActivity extends AppCompatActivity {
         create=findViewById(R.id.Create);
         add = findViewById(R.id.Add);
         leave=findViewById(R.id.Leave);
-
+        recyclerView=findViewById(R.id.groupMembers);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //TextView title = (TextView) findViewById(R.id.tva);
         //title.setText("This is Account Activity");
 
         //Getting sharedPreferences
-        SharedPreferences sharedPreferences = AccountActivity.this.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = AccountActivity.this.getSharedPreferences("UserData", Context.MODE_PRIVATE);
         userGroup=sharedPreferences.getString("group","no group received");
         userName=sharedPreferences.getString("username","no username received");
         userType=sharedPreferences.getInt("type",100);
+        myref3 = database.getReference("Users");
+        Query query = myref3.orderByChild("username").equalTo(userName);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        Users updatedUser = snaps.getValue(Users.class);
+                        userGroup=updatedUser.getGroup();
+                        userType=updatedUser.getType();
+                        SharedPreferences.Editor edit = sharedPreferences.edit();
+                        edit.remove("group");
+                        edit.remove("type");
+                        edit.putString("group", userGroup);
+                        edit.putInt("type",userType);
+                        edit.apply();
 
-        if (!userName.equals(userGroup)){
-            create.setVisibility(View.INVISIBLE);
-            leave.setVisibility(View.VISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
+                        if (!userName.equals(userGroup)){
+                            create.setVisibility(View.INVISIBLE);
+                            leave.setVisibility(View.VISIBLE);
+                            add.setVisibility(View.VISIBLE);
+                            getgroup(userGroup);
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
         myref2= database.getReference("Users").child(userName);
         /***************code for navigation bar below****************************/
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavView_Bar);
@@ -69,7 +106,6 @@ public class AccountActivity extends AppCompatActivity {
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(4);
         menuItem.setChecked(true);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -108,6 +144,36 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
         /***************code for navigation bar ends here****************************/
+    }
+
+    private void inflate() {
+        Log.d(TAG, "inflate: called");
+        AccountAdapter adapter = new AccountAdapter(this,members);
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    private void getgroup(String userGroup) {
+        Log.d(TAG, "getgroup: called");
+        members.clear();
+        Query memQuery = myref3.orderByChild("group").equalTo(userGroup);
+        memQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snaps : dataSnapshot.getChildren()){
+                        members.add(snaps.getKey());
+                    }
+                }
+                inflate();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void CreateGroup(View view) {
@@ -202,7 +268,7 @@ public class AccountActivity extends AppCompatActivity {
                             userNew.child("group").setValue(userGroup);
                             userNew.child("type").setValue(userType);
                         }else {
-                            Toast.makeText(getApplicationContext(), " No Such user Exists", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), " No Such user Exists or already exists in other group", Toast.LENGTH_LONG).show();
                         }
                     }
 

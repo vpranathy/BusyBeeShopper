@@ -2,17 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40sp"
-
-
+    android:background="@drawable/border"
     android:id="@+id/accountitem"
     >
     <TextView
         android:id="@+id/Participant"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-
-        android:textSize="30sp"
+        android:textSize="15sp"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
         />
 
 

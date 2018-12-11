@@ -3,6 +3,7 @@ package com.example.mobileapp.busybeeshopper;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,19 +27,20 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder2 onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.account_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.account_item, parent, false);
         ViewHolder2 holder = new ViewHolder2(view);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder2 viewHolder2, int i) {
-
+        Log.d(TAG, "onBindViewHolder: in account called");
+        viewHolder2.participant.setText(mParticipants.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mParticipants.size();
     }
 
     public class ViewHolder2 extends RecyclerView.ViewHolder{
