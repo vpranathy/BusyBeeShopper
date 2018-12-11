@@ -78,6 +78,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:onClick="CreateGroup"
+                android:visibility="invisible"
                 android:text="Create Group" />
             <Button
 

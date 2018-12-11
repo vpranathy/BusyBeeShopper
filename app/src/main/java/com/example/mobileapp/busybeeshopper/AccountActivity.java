@@ -61,9 +61,9 @@ public class AccountActivity extends AppCompatActivity {
 
         //Getting sharedPreferences
         final SharedPreferences sharedPreferences = AccountActivity.this.getSharedPreferences("UserData", Context.MODE_PRIVATE);
-        userGroup=sharedPreferences.getString("group","no group received");
+
         userName=sharedPreferences.getString("username","no username received");
-        userType=sharedPreferences.getInt("type",100);
+
         myref3 = database.getReference("Users");
         Query query = myref3.orderByChild("username").equalTo(userName);
         query.addValueEventListener(new ValueEventListener() {
@@ -74,6 +74,7 @@ public class AccountActivity extends AppCompatActivity {
                         Users updatedUser = snaps.getValue(Users.class);
                         userGroup=updatedUser.getGroup();
                         userType=updatedUser.getType();
+                        Log.d(TAG, "onDataChange: type "+userGroup+"    name is "+userName);
                         SharedPreferences.Editor edit = sharedPreferences.edit();
                         edit.remove("group");
                         edit.remove("type");
@@ -82,11 +83,17 @@ public class AccountActivity extends AppCompatActivity {
                         edit.apply();
 
                         if (!userName.equals(userGroup)){
+                            Log.d(TAG, "onDataChange: enering equals");
                             create.setVisibility(View.INVISIBLE);
                             leave.setVisibility(View.VISIBLE);
                             add.setVisibility(View.VISIBLE);
                             getgroup(userGroup);
 
+                        }else {
+                            Log.d(TAG, "onDataChange: not equals");
+                            create.setVisibility(View.VISIBLE);
+                            leave.setVisibility(View.INVISIBLE);
+                            add.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -251,32 +258,46 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 newUser= addNewUser.getText().toString();
-                DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
-                myref5.addListenerForSingleValueEvent(new ValueEventListener() {
+                DatabaseReference checknew = database.getReference("Users").child(newUser);
+                checknew.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            for (DataSnapshot snaps : dataSnapshot.getChildren()) {
-                                String Name = snaps.child("itemName").getValue().toString();
-                                String ID = snaps.child("itemID").getValue().toString();
-                                String description = snaps.child("description").getValue().toString();
-                                Item newItem = new Item(description, Name, ID);
-                                database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
-                            }
-                            database.getReference("PersonalList").child(newUser).removeValue();
-                            DatabaseReference userNew= database.getReference("Users").child(newUser);
-                            userNew.child("group").setValue(userGroup);
-                            userNew.child("type").setValue(userType);
-                        }else {
+                            DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
+                            myref5.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        for (DataSnapshot snaps : dataSnapshot.getChildren()) {
+                                            String Name = snaps.child("itemName").getValue().toString();
+                                            String ID = snaps.child("itemID").getValue().toString();
+                                            String description = snaps.child("description").getValue().toString();
+                                            Item newItem = new Item(description, Name, ID);
+                                            database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
+                                        }
+                                        database.getReference("PersonalList").child(newUser).removeValue();
+                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
+                                        userNew.child("group").setValue(userGroup);
+                                        userNew.child("type").setValue(userType);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
                             Toast.makeText(getApplicationContext(), " No Such user Exists or already exists in other group", Toast.LENGTH_LONG).show();
+
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
+
             }
         });
 
