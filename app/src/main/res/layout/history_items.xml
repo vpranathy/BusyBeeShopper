@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
+    android:background="@drawable/border"
     android:id="@+id/layout_history">
     <TextView
         android:id="@+id/indHistItem"
@@ -10,6 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="Data"
         android:layout_centerVertical="true"
+        android:textAlignment="center"
         android:textSize="15sp"
         />
 

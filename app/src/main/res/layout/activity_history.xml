@@ -41,10 +41,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="History"
-                android:textStyle="italic"
                 android:textSize="17sp"
                 android:textAlignment="center"
-                android:textColor="@color/colorLightBlue"
+                android:textColor="@color/colorFinal"
                 android:layout_alignParentTop="true"
 
                 />

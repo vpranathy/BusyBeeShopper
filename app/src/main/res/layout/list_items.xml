@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
+    android:background="@drawable/border"
     android:id="@+id/layout_item"
     >
     <de.hdodenhof.circleimageview.CircleImageView
@@ -27,10 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/individualItem"
-        android:layout_alignParentRight="true"
         android:layout_marginLeft="130dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="1dp"
         android:layout_toRightOf="@+id/individualItem"
         android:hint="User who added item"
         android:textSize="10sp" />
