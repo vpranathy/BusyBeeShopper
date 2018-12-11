@@ -28,9 +28,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/individualItem"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/individualItem"
+        android:layout_marginTop="11dp"
+        android:layout_toRightOf="@+id/itemDescription"
+        android:layout_marginLeft="40dp"
         android:hint="User who added item"
         android:textSize="10sp" />
 
