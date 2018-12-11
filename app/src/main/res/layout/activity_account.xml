@@ -89,14 +89,7 @@
                 android:onClick="addUser"
                 android:visibility="invisible"
                 android:text="ADD"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/Leave"
-                android:visibility="invisible"
-                android:onClick="leaveGroup"
-                android:text="Leave Group"/>
+
         </RelativeLayout>
 
 

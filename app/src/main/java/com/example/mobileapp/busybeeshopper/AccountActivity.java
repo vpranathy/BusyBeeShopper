@@ -53,7 +53,7 @@ public class AccountActivity extends AppCompatActivity {
 
         create=findViewById(R.id.Create);
         add = findViewById(R.id.Add);
-        leave=findViewById(R.id.Leave);
+        //leave=findViewById(R.id.Leave);
         recyclerView=findViewById(R.id.groupMembers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -65,7 +65,7 @@ public class AccountActivity extends AppCompatActivity {
 
         myref3 = database.getReference("Users");
         Query query = myref3.orderByChild("username").equalTo(userName);
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
@@ -84,14 +84,14 @@ public class AccountActivity extends AppCompatActivity {
                         if (!userName.equals(userGroup)){
                             Log.d(TAG, "onDataChange: enering equals");
                             create.setVisibility(View.INVISIBLE);
-                            leave.setVisibility(View.VISIBLE);
+                        //    leave.setVisibility(View.VISIBLE);
                             add.setVisibility(View.VISIBLE);
                             getgroup(userGroup);
 
                         }else {
                             Log.d(TAG, "onDataChange: not equals");
                             create.setVisibility(View.VISIBLE);
-                            leave.setVisibility(View.INVISIBLE);
+//                            leave.setVisibility(View.INVISIBLE);
                             add.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -245,76 +245,160 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     public void addUser(View view) {
-        AlertDialog.Builder alert= new AlertDialog.Builder(this);
-        alert.setTitle("Enter Username");
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
         addNewUser= new EditText(this);
         addNewUser.setHint("Item");
         layout.addView(addNewUser);
-        alert.setView(layout);
-        alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+
+
+        final AlertDialog ad1= new AlertDialog.Builder(this).setView(layout).setTitle("Enter item Details").setPositiveButton(android.R.string.ok,null).setNegativeButton(android.R.string.cancel,null).create();
+        ad1.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                newUser= addNewUser.getText().toString();
-                DatabaseReference checknew = database.getReference("Users").child(newUser);
-                checknew.addValueEventListener(new ValueEventListener() {
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button button1 = ((AlertDialog) ad1).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Log.d(TAG, "onDataChange: entering");
-                            DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
-                            myref5.addListenerForSingleValueEvent(new ValueEventListener() {
+                    public void onClick(View v) {
+                        newUser= addNewUser.getText().toString();
+                        if(!newUser.trim().isEmpty()) {
+                            DatabaseReference checknew = database.getReference("Users").child(newUser);
+                            checknew.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
-                                        for (DataSnapshot snaps : dataSnapshot.getChildren()) {
-                                            String Name = snaps.child("itemName").getValue().toString();
-                                            String ID = snaps.child("itemID").getValue().toString();
-                                            String description = snaps.child("description").getValue().toString();
-                                            Item newItem = new Item(description, Name, ID);
-                                            database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
-                                        }
-                                        database.getReference("PersonalList").child(newUser).removeValue();
-                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
-                                        userNew.child("group").setValue(userGroup);
-                                        userNew.child("type").setValue(userType);
-                                    }
-                                    else{
-                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
-                                        userNew.child("group").setValue(userGroup);
-                                        userNew.child("type").setValue(userType);
+                                        Log.d(TAG, "onDataChange: entering");
+                                        DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
+                                        myref5.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    for (DataSnapshot snaps : dataSnapshot.getChildren()) {
+                                                        String Name = snaps.child("itemName").getValue().toString();
+                                                        String ID = snaps.child("itemID").getValue().toString();
+                                                        String description = snaps.child("description").getValue().toString();
+                                                        Item newItem = new Item(description, Name, ID);
+                                                        database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
+                                                    }
+                                                    database.getReference("PersonalList").child(newUser).removeValue();
+                                                    DatabaseReference userNew = database.getReference("Users").child(newUser);
+                                                    userNew.child("group").setValue(userGroup);
+                                                    userNew.child("type").setValue(userType);
+                                                }
+                                                else{
+                                                    DatabaseReference userNew = database.getReference("Users").child(newUser);
+                                                    userNew.child("group").setValue(userGroup);
+                                                    userNew.child("type").setValue(userType);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), " No Such user Exists or already exists in other group", Toast.LENGTH_LONG).show();
+
                                     }
                                 }
-
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
                             });
-                        } else {
-                            Toast.makeText(getApplicationContext(), " No Such user Exists or already exists in other group", Toast.LENGTH_LONG).show();
-
+                            ad1.dismiss();
                         }
+                        else {
+                            Toast.makeText(getApplicationContext(),"Enter All Details",Toast.LENGTH_SHORT).show();
+                        }
+
+
                     }
+
+                });
+                button1.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onClick(View v) {
+                        ad1.dismiss();
 
                     }
                 });
-
             }
         });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        ad=alert.create();
-        ad.show();
+        ad1.show();
+//        AlertDialog.Builder alert= new AlertDialog.Builder(this);
+//        alert.setTitle("Enter Username");
+//        LinearLayout layout = new LinearLayout(this);
+//        layout.setOrientation(LinearLayout.VERTICAL);
+//
+//        addNewUser= new EditText(this);
+//        addNewUser.setHint("Item");
+//        layout.addView(addNewUser);
+//        alert.setView(layout);
+//        alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                newUser= addNewUser.getText().toString();
+//                DatabaseReference checknew = database.getReference("Users").child(newUser);
+//                checknew.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            Log.d(TAG, "onDataChange: entering");
+//                            DatabaseReference myref5 = database.getReference("PersonalList").child(newUser);
+//                            myref5.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                    if (dataSnapshot.exists()) {
+//                                        for (DataSnapshot snaps : dataSnapshot.getChildren()) {
+//                                            String Name = snaps.child("itemName").getValue().toString();
+//                                            String ID = snaps.child("itemID").getValue().toString();
+//                                            String description = snaps.child("description").getValue().toString();
+//                                            Item newItem = new Item(description, Name, ID);
+//                                            database.getReference(userGroup).child(newUser).child(Name).setValue(newItem);
+//                                        }
+//                                        database.getReference("PersonalList").child(newUser).removeValue();
+//                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
+//                                        userNew.child("group").setValue(userGroup);
+//                                        userNew.child("type").setValue(userType);
+//                                    }
+//                                    else{
+//                                        DatabaseReference userNew = database.getReference("Users").child(newUser);
+//                                        userNew.child("group").setValue(userGroup);
+//                                        userNew.child("type").setValue(userType);
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), " No Such user Exists or already exists in other group", Toast.LENGTH_LONG).show();
+//
+//                        }
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }
+//        });
+//
+//        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//        ad=alert.create();
+//        ad.show();
     }
 
     public void leaveGroup(View view) {
